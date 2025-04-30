@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
-public class pantallaPrincipalController {
+public class ControladorSeleccionJugadores {
 
     @FXML private MenuItem newGame;
     @FXML private MenuItem saveGame;
@@ -67,20 +67,15 @@ public class pantallaPrincipalController {
         // Basic check (just for demo, replace with real login logic)
         if (!username.isEmpty() && !password.isEmpty()) {
             try {
-                // Cargamos primero la pantalla de selección de jugadores
-                FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/pantallaSeleccionJugadores.fxml")
-                );
-                Parent selRoot = loader.load();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaJuego.fxml"));
+                Parent pantallaJuegoRoot = loader.load();
 
-                Scene selScene = new Scene(selRoot);
+                Scene pantallaJuegoScene = new Scene(pantallaJuegoRoot);
 
-                // Reutilizamos la misma ventana de login para la selección
-                Stage stage = (Stage) ((Node) event.getSource())
-                    .getScene().getWindow();
-                stage.setScene(selScene);
-                stage.setTitle("¿Cuántos jugadores?");
-
+                // Get the current stage using the event
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(pantallaJuegoScene);
+                stage.setTitle("Pantalla de Juego");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -88,6 +83,7 @@ public class pantallaPrincipalController {
             System.out.println("Please. Enter user and password.");
         }
     }
+
 
     @FXML
     private void handleRegister() {

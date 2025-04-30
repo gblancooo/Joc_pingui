@@ -1,0 +1,41 @@
+package controlador;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.stage.Stage;
+
+public class ControladorSeleccionJugadores {
+
+    @FXML
+    private Spinner<Integer> spinnerJugadores;
+
+    @FXML
+    public void initialize() {
+        spinnerJugadores.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 4, 2));
+    }
+
+    @FXML
+    private void ejecutarJuego() {
+        int cantidad = spinnerJugadores.getValue();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaJuego.fxml"));
+            Scene scene = new Scene(loader.load());
+            ControladorJuego controlador = loader.getController();
+            controlador.inicializarJugadores(cantidad);
+
+            Stage stage = new Stage();
+            stage.setTitle("Juego");
+            stage.setScene(scene);
+            stage.show();
+
+            // Opcional: cerrar esta ventana
+            spinnerJugadores.getScene().getWindow().hide();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
