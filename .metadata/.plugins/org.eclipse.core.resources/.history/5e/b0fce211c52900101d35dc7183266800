@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="vista.pantallaJuegoController"
+      spacing="10"
+      padding="10,10,10,10">  <!-- Aquí el cambio: cuatro valores en lugar de uno -->
+    <!-- Menú -->
+    <MenuBar>
+      <menus>
+        <Menu text="File">
+          <items>
+            <MenuItem fx:id="newGame" text="New"/>
+            <SeparatorMenuItem/>
+            <MenuItem fx:id="saveGame" text="Save"/>
+            <MenuItem fx:id="loadGame" text="Load"/>
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+
+    <!-- Panel de juego -->
+    <BorderPane VBox.vgrow="ALWAYS">
+        <center>
+            <!-- Aquí van las casillas -->
+            <GridPane fx:id="tablero" gridLinesVisible="true">
+                <!-- 5 columnas -->
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="100"/>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="100"/>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="100"/>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="100"/>
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="100"/>
+                </columnConstraints>
+                <!-- 10 filas -->
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                    <RowConstraints vgrow="ALWAYS" prefHeight="40"/>
+                </rowConstraints>
+            </GridPane>
+        </center>
+        <bottom>
+            <!-- Botones de acción -->
+            <HBox spacing="10" padding="10,10,10,10">
+                <Button fx:id="btnTirarDado" text="Tirar Dado"/>
+                <Button fx:id="btnBolaNieve" text="Lanzar Bola de Nieve"/>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</VBox>

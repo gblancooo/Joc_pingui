@@ -8,7 +8,7 @@ import java.util.List;
  * Controla el flujo de la partida y la persistencia.
  */
 public class gestorPartidas {
-    private static gestorTablero tablero;
+    private gestorTablero tablero;
     private List<Jugador> jugadores;
     private int turnoActual;
 
@@ -23,7 +23,7 @@ public class gestorPartidas {
         this.turnoActual = 0;
     }
 
-    public static gestorTablero getTablero() {
+    public gestorTablero getTablero() {
         return tablero;
     }
 

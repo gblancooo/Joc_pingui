@@ -81,7 +81,7 @@ public class pantallaJuegoController {
 
     /** Maneja la tirada de dado via modelo */
     @FXML private void handleDado() {
-        int result = gestor.tirarDado();  // implementa en gestorPartidas
+        int result = gestor.lanzarDado();  // implementa en gestorPartidas
         dadoResultText.setText("Ha salido: " + result);
         gestor.jugarTurno();
         int idx = gestor.getTurnoActual();

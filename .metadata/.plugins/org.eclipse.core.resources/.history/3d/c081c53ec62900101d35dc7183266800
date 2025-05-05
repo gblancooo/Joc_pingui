@@ -37,6 +37,7 @@ public class pantallaSeleccionJugadoresController {
             List<Jugador> jugadores = new ArrayList<>();
             String[] colores = {"Azul", "Rojo", "Verde", "Amarillo"};
             for (int i = 0; i < num; i++) {
+                // posición inicial 0, nombre Jugador 1–n, color según índice
                 jugadores.add(new Pinguino(
                     0,
                     "Jugador " + (i + 1),
@@ -55,9 +56,10 @@ public class pantallaSeleccionJugadoresController {
             );
             Parent root = loader.load();
 
-            // 4) Llamar a initGame en lugar de los métodos que daban error
+            // 4) Pasar datos al controlador de pantalla de juego
             vista.pantallaJuegoController ctrl = loader.getController();
-            ctrl.initGame(num, gp);
+            ctrl.setNumeroJugadores(num);
+            ctrl.setGestorPartidas(gp);
 
             // 5) Mostrar ventana de juego
             Stage stage = new Stage();

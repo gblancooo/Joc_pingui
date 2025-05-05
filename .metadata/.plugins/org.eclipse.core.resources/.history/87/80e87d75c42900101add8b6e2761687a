@@ -1,0 +1,46 @@
+package controlador;
+
+import modelo.Jugador;
+import modelo.Casilla;
+import java.util.List;
+
+/**
+ * Controla el flujo de la partida y la persistencia.
+ */
+public class gestorPartidas {
+    private static gestorTablero tablero;
+    private List<Jugador> jugadores;
+    private int turnoActual;
+
+    // Datos de conexión / encriptación
+    private String urlBBDD;
+    private String username;
+    private String password;
+
+    public gestorPartidas(gestorTablero tablero, List<Jugador> jugadores) {
+        super();
+        this.tablero     = tablero;
+        this.jugadores   = jugadores;
+        this.turnoActual = 0;
+    }
+
+    public static gestorTablero getTablero() {
+        return tablero;
+    }
+
+    /** Ejecuta un turno: tirar dado, mover y activar casilla */
+    public void jugarTurno() {
+        Jugador j = jugadores.get(turnoActual);
+        int pasos = lanzarDado();        
+        j.moverPosicion(pasos);
+        Casilla cas = tablero.getCasillas().get(j.getPosicion());
+        cas.realizarAccion(j, this);
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        // Aquí podrías serializar en BBDD encriptada
+    }
+
+    private int lanzarDado() {
+        // Combina dados normales/rápidos/lentos según inventario
+        return (int)(Math.random() * 6) + 1;
+    }
+}
