@@ -1,0 +1,50 @@
+package modelo;
+
+import java.util.ArrayList;
+import controlador.gestorPartidas;
+
+/**
+ * Clase base para todas las casillas.
+ * Mantiene posición e historial de jugadores que han caído aquí.
+ */
+public abstract class Casilla {
+    private int posicion;
+    private ArrayList<Jugador> jugadoresActuales;
+
+    public Casilla(int posicion, ArrayList<Jugador> jugadoresActuales) {
+        super();
+        this.posicion = posicion;
+        this.jugadoresActuales = jugadoresActuales;
+    }
+
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
+    }
+
+    public ArrayList<Jugador> getJugadoresActuales() {
+        return jugadoresActuales;
+    }
+
+    public void setJugadoresActuales(ArrayList<Jugador> jugadoresActuales) {
+        this.jugadoresActuales = jugadoresActuales;
+    }
+
+    /**
+     * Cuando un jugador cae en esta casilla, se llama a este método.
+     * @param j  el jugador que cae aquí
+     * @param gp el gestor de la partida (para acceder al tablero, turno, etc.)
+     */
+    public abstract void realizarAccion(Jugador j, gestorPartidas gp);
+
+    public void añadirJugador(Jugador j) {
+        this.jugadoresActuales.add(j);
+    }
+
+    public void quitarJugador(Jugador j) {
+        this.jugadoresActuales.remove(j);
+    }
+}

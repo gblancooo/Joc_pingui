@@ -3,16 +3,15 @@ package modelo;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Evento extends Casilla {
+public abstract class Evento extends Casilla {
 	private String[] eventos = { "pez", "bolas", "rapido", "lento", "pierdeTurno", "pierdeItem", "motos" };
 
 	public Evento(int posicion, ArrayList<Jugador> jugadoresActuales, String tipoEvento) {
 		super(posicion, jugadoresActuales);
 	}
 
-	@Override
 	public void realizarAccion() {
-		for (Jugador j : jugadoresActuales) {
+		for (Jugador j : getJugadoresActuales()) {
 			if (j instanceof Pinguino) {
 				Random ran = new Random();
 				int pos = ran.nextInt(6);

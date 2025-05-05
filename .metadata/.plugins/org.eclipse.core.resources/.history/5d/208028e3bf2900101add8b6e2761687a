@@ -1,0 +1,45 @@
+package controlador;
+
+import modelo.Casilla;
+import modelo.CasillaNormal;
+import modelo.Agujero;
+import modelo.Trineo;
+import modelo.Oso;
+import modelo.Interrogant;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ * Genera y mantiene 50 casillas de distintos tipos de forma aleatoria.
+ */
+public class gestorTablero {
+    private final ArrayList<Casilla> casillas;
+
+    public gestorTablero() {
+        casillas = new ArrayList<>();
+        Random rand = new Random();
+        for (int i = 0; i < 50; i++) {
+            int tipo = rand.nextInt(5);
+            switch (tipo) {
+                case 0:  casillas.add(new Oso(i, new ArrayList<>()));         break;
+                case 1:  casillas.add(new Agujero(i, new ArrayList<>()));     break;
+                case 2:  casillas.add(new Trineo(i, new ArrayList<>()));      break;
+                case 3:  casillas.add(new Interrogant(i, new ArrayList<>())); break;
+                default: casillas.add(new CasillaNormal(i, new ArrayList<>())); break;
+            }
+        }
+    }
+
+    public ArrayList<Casilla> getCasillas() {
+        return casillas;
+    }
+
+    /** Devuelve el índice de la siguiente casilla del tipo dado, empezando tras 'desde'. */
+    public int siguienteIndiceDe(Class<? extends Casilla> cls, int desde) {
+        for (int i = desde + 1; i < casillas.size(); i++) {
+            if (cls.isInstance(casillas.get(i))) return i;
+        }
+        return desde;
+    }
+}

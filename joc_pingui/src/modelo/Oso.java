@@ -1,20 +1,25 @@
 package modelo;
 
 import java.util.ArrayList;
+import controlador.gestorPartidas;
 
+/**
+ * Si el jugador no tiene peces, vuelve al inicio.
+ * Si tiene al menos 1 pez, lo consume y no retrocede.
+ */
 public class Oso extends Casilla {
 
-	public Oso(int posicion, ArrayList<Jugador> jugadoresActuales) {
-		super(posicion, jugadoresActuales);
-	}
+    public Oso(int posicion, ArrayList<Jugador> jugadoresActuales) {
+        super(posicion, jugadoresActuales);
+    }
 
-	@Override
-	public void realizarAccion() {
-		for (Jugador j : this.jugadoresActuales) {
-			if (j instanceof Pinguino) {
-				j.moverPosicion(0);
-			}
-		}
-	}
-
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        Inventario inv = j.getInventario();
+        if (inv.getPeces() > 0) {
+            inv.usarPez();
+        } else {
+            j.setPosicion(0);
+        }
+    }
 }

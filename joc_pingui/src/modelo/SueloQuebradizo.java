@@ -2,7 +2,7 @@ package modelo;
 
 import java.util.ArrayList;
 
-public class SueloQuebradizo extends Casilla {
+public abstract class SueloQuebradizo extends Casilla {
 
 	public SueloQuebradizo(int posicion, ArrayList<Jugador> jugadoresActuales) {
 		super(posicion, jugadoresActuales);
@@ -10,7 +10,7 @@ public class SueloQuebradizo extends Casilla {
 
 	@Override
 	public void realizarAccion() {
-		for(Jugador j : jugadoresActuales) {
+		for(Jugador j : getJugadoresActuales()) {
 			if(j instanceof Pinguino) {
 				if(((Pinguino) j).getInv().getLista().size() == 0) {
 					

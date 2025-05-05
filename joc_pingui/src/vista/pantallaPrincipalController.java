@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import controlador.gestorPartidas;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 
@@ -94,4 +95,9 @@ public class pantallaPrincipalController {
         System.out.println("Register pressed");
         // TODO
     }
+
+	public void setGestorPartidas(gestorPartidas gp) {
+		// TODO Auto-generated method stub
+		
+	}
 }

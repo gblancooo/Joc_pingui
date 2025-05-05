@@ -1,17 +1,19 @@
 package modelo;
 
 import java.util.ArrayList;
+import controlador.gestorPartidas;
 
+/**
+ * Envía al jugador al agujero anterior (Forat).
+ */
 public class Agujero extends Casilla {
 
-	public Agujero(int posicion, ArrayList<Jugador> jugadoresActuales) {
-		super(posicion, jugadoresActuales);
-	}
+    public Agujero(int posicion, ArrayList<Jugador> jugadoresActuales) {
+        super(posicion, jugadoresActuales);
+    }
 
-	@Override
-	public void realizarAccion() {
-		// TODO Auto-generated method stub
-
-	}
-
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        j.retrocederAlForatAnterior();
+    }
 }

@@ -1,17 +1,21 @@
 package modelo;
 
 import java.util.ArrayList;
+import controlador.gestorPartidas;
 
+/**
+ * Avanza al siguiente Trineo del tablero.
+ */
 public class Trineo extends Casilla {
 
-	public Trineo(int posicion, ArrayList<Jugador> jugadoresActuales) {
-		super(posicion, jugadoresActuales);
-	}
+    public Trineo(int posicion, ArrayList<Jugador> jugadoresActuales) {
+        super(posicion, jugadoresActuales);
+    }
 
-	@Override
-	public void realizarAccion() {
-		// TODO Auto-generated method stub
-
-	}
-
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        int destino = gp.getTablero()
+                        .siguienteIndiceDe(Trineo.class, this.getPosicion());
+        j.setPosicion(destino);
+    }
 }

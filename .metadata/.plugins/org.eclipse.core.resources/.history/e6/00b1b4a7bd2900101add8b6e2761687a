@@ -1,0 +1,19 @@
+package modelo;
+import controlador.gestorPartidas;
+import java.util.ArrayList;
+
+public class CasillaNormal extends Casilla {
+    public CasillaNormal(int indice) {
+        super(indice, new ArrayList<>());
+    }
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        // No hace nada
+    }
+	@Override
+	public void realizarAccion() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+
