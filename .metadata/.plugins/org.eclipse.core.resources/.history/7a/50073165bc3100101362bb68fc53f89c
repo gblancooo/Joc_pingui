@@ -23,6 +23,4 @@ public class Evento {
                 if (inv.addDadoLento()) return jugador.getNombre() + " ha obtenido un dado lento!";
                 break;
         }
-        return jugador.getNombre() + " no obtuvo ningún objeto.";
-    }
-}
+        return jugador.getNombre() + " no

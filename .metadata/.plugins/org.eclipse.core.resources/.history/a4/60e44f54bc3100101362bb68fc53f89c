@@ -5,24 +5,24 @@ import java.util.Random;
 public class Evento {
     private static Random rnd = new Random();
 
-    public static String activarEvento(Jugador jugador) {
+    public static void activarEvento(Jugador jugador) {
         Inventario inv = jugador.getInventario();
         int tipo = rnd.nextInt(4);
         switch (tipo) {
             case 0:
-                if (inv.addPez()) return jugador.getNombre() + " ha obtenido un pez!";
+                if (inv.addPez()) System.out.println(jugador.getNombre() + " ha obtingut un peix!");
                 break;
             case 1:
                 int n = 1 + rnd.nextInt(3), añadidas = 0;
                 for (int i = 0; i < n; i++) if (inv.addBola()) añadidas++;
-                return jugador.getNombre() + " ha obtenido " + añadidas + " bolas de nieve!";
+                System.out.println(jugador.getNombre() + " ha obtingut " + añadidas + " boles de neu!");
+                break;
             case 2:
-                if (inv.addDadoRapido()) return jugador.getNombre() + " ha obtenido un dado rápido!";
+                if (inv.addDado()) System.out.println(jugador.getNombre() + " ha obtingut un dau (ràpid)!");
                 break;
             case 3:
-                if (inv.addDadoLento()) return jugador.getNombre() + " ha obtenido un dado lento!";
+                if (inv.addDado()) System.out.println(jugador.getNombre() + " ha obtingut un dau (lent)!");
                 break;
         }
-        return jugador.getNombre() + " no obtuvo ningún objeto.";
     }
 }

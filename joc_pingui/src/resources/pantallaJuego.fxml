@@ -66,16 +66,16 @@
                       <font><Font size="30.0" /></font>
                     </Text>
 
-                    <Button fx:id="rapido" text="Usar" AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="90.0">
+                    <Button fx:id="rapido" text="Usar" AnchorPane.leftAnchor="55.0" AnchorPane.topAnchor="90.0" onAction="#handleRapido">
                       <font><Font size="30.0" /></font>
                     </Button>
-                    <Button fx:id="lento" text="Usar" AnchorPane.leftAnchor="290.0" AnchorPane.topAnchor="90.0">
+                    <Button fx:id="lento" text="Usar" AnchorPane.leftAnchor="290.0" AnchorPane.topAnchor="90.0" onAction="#handleLento">
                       <font><Font size="30.0" /></font>
                     </Button>
-                    <Button fx:id="peces" text="Usar" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="90.0">
+                    <Button fx:id="peces" text="Usar" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="90.0" onAction="#handlePeces">
                       <font><Font size="30.0" /></font>
                     </Button>
-                    <Button fx:id="nieve" text="Usar" AnchorPane.leftAnchor="810.0" AnchorPane.topAnchor="90.0">
+                    <Button fx:id="nieve" text="Usar" AnchorPane.leftAnchor="810.0" AnchorPane.topAnchor="90.0" onAction="#handleNieve">
                       <font><Font size="30.0" /></font>
                     </Button>
                   </children>

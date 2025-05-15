@@ -1,20 +1,77 @@
 package modelo;
 
 public class Inventario {
-    private int dados, peces, bolasNieve;
+    private int dadosRapidos, dadosLentos, peces, bolasNieve;
     private static final int MAX_DADOS = 3, MAX_PECES = 2, MAX_BOLAS = 6;
 
-    public Inventario() { this.dados = this.peces = this.bolasNieve = 0; }
+    public Inventario() { 
+        this.dadosRapidos = 0; 
+        this.dadosLentos = 0;
+        this.peces = 0; 
+        this.bolasNieve = 0; 
+    }
 
-    public boolean addDado()    { if (dados<MAX_DADOS){dados++;return true;}return false; }
-    public boolean usarDado()   { if (dados>0){dados--;return true;}return false; }
-    public int getDados()       { return dados; }
+    public boolean addDadoRapido() { 
+        if (dadosRapidos < MAX_DADOS) { 
+            dadosRapidos++; 
+            return true; 
+        } 
+        return false; 
+    }
+    public boolean usarDadoRapido() { 
+        if (dadosRapidos > 0) { 
+            dadosRapidos--; 
+            return true; 
+        } 
+        return false; 
+    }
+    public int getDadosRapidos() { return dadosRapidos; }
 
-    public boolean addPez()     { if (peces<MAX_PECES){peces++;return true;}return false; }
-    public boolean usarPez()    { if (peces>0){peces--;return true;}return false; }
-    public int getPeces()       { return peces; }
+    public boolean addDadoLento() { 
+        if (dadosLentos < MAX_DADOS) { 
+            dadosLentos++; 
+            return true; 
+        } 
+        return false; 
+    }
+    public boolean usarDadoLento() { 
+        if (dadosLentos > 0) { 
+            dadosLentos--; 
+            return true; 
+        } 
+        return false; 
+    }
+    public int getDadosLentos() { return dadosLentos; }
 
-    public boolean addBola()    { if (bolasNieve<MAX_BOLAS){bolasNieve++;return true;}return false; }
-    public boolean usarBola()   { if (bolasNieve>0){bolasNieve--;return true;}return false; }
-    public int getBolasNieve()  { return bolasNieve; }
+    public boolean addPez() { 
+        if (peces < MAX_PECES) { 
+            peces++; 
+            return true; 
+        } 
+        return false; 
+    }
+    public boolean usarPez() { 
+        if (peces > 0) { 
+            peces--; 
+            return true; 
+        } 
+        return false; 
+    }
+    public int getPeces() { return peces; }
+
+    public boolean addBola() { 
+        if (bolasNieve < MAX_BOLAS) { 
+            bolasNieve++; 
+            return true; 
+        } 
+        return false; 
+    }
+    public boolean usarBola() { 
+        if (bolasNieve > 0) { 
+            bolasNieve--; 
+            return true; 
+        } 
+        return false; 
+    }
+    public int getBolasNieve() { return bolasNieve; }
 }
