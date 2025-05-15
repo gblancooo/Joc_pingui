@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
@@ -124,42 +123,11 @@
               <font><Font size="30.0" /></font>
             </Text>
 
-            <ImageView fx:id="P1" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, black, 4, 0.0, 0, 1);">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="0" />
-              </GridPane.margin>
-              <image>
-                <Image url="@img/penguin_blue.png" />
-              </image>
-            </ImageView>
-
-            <ImageView fx:id="P2" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="40" />
-              </GridPane.margin>
-              <image>
-                <Image url="@img/penguin_red.png" />
-              </image>
-            </ImageView>
-
-            <ImageView fx:id="P3" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="80" />
-              </GridPane.margin>
-              <image>
-                <Image url="@img/penguin_green.png" />
-              </image>
-            </ImageView>
-
-            <ImageView fx:id="P4" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="120" />
-              </GridPane.margin>
-              <image>
-                <Image url="@img/penguin_yellow.png" />
-              </image>
-            </ImageView>
-
+            <!-- Reemplazamos círculos por imágenes de pingüinos -->
+            <ImageView fx:id="P1" fitWidth="30" fitHeight="30" pickOnBounds="true" preserveRatio="true" image="@images/penguin_blue.png" />
+            <ImageView fx:id="P2" fitWidth="30" fitHeight="30" pickOnBounds="true" preserveRatio="true" image="@images/penguin_red.png" />
+            <ImageView fx:id="P3" fitWidth="30" fitHeight="30" pickOnBounds="true" preserveRatio="true" image="@images/penguin_green.png" />
+            <ImageView fx:id="P4" fitWidth="30" fitHeight="30" pickOnBounds="true" preserveRatio="true" image="@images/penguin_yellow.png" />
           </children>
         </GridPane>
       </center>

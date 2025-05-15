@@ -8,9 +8,8 @@ import javafx.geometry.HPos;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import modelo.Casilla;
@@ -30,8 +29,7 @@ public class pantallaJuegoController {
     @FXML private MenuItem quitGame;
 
     @FXML private GridPane tablero;
-    // Cambiado de Circle a ImageView
-    @FXML private ImageView P1, P2, P3, P4;
+    @FXML private Circle P1, P2, P3, P4;
 
     @FXML private Text dadoResultText;
     @FXML private Button dado;
@@ -49,23 +47,6 @@ public class pantallaJuegoController {
 
     public void initialize() {
         gestorTablero = new gestorTablero();
-
-        // Cargar imágenes de pingüinos para cada jugador
-        P1.setImage(new Image(getClass().getResourceAsStream("/images/penguin_blue.png")));
-        P2.setImage(new Image(getClass().getResourceAsStream("/images/penguin_red.png")));
-        P3.setImage(new Image(getClass().getResourceAsStream("/images/penguin_green.png")));
-        P4.setImage(new Image(getClass().getResourceAsStream("/images/penguin_yellow.png")));
-
-        // Ajustar tamaño de imagen (opcional)
-        P1.setFitWidth(30);
-        P1.setFitHeight(30);
-        P2.setFitWidth(30);
-        P2.setFitHeight(30);
-        P3.setFitWidth(30);
-        P3.setFitHeight(30);
-        P4.setFitWidth(30);
-        P4.setFitHeight(30);
-
         moverFicha(P1, 0);
         moverFicha(P2, 0);
         moverFicha(P3, 0);
@@ -105,11 +86,10 @@ public class pantallaJuegoController {
             tablero.add(txt, col, row);
         }
 
-        // Añadimos las imágenes de pingüinos en lugar de los círculos
         tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 
-    private void moverFicha(ImageView ficha, int destino) {
+    private void moverFicha(Circle ficha, int destino) {
         int cols = 5;
 
         Integer currentRow = GridPane.getRowIndex(ficha);
@@ -150,7 +130,7 @@ public class pantallaJuegoController {
         nieve.setDisable(jugadorActual.getInventario().getBolasNieve() == 0);
 
         for (int i = 0; i < jugadores.size(); i++) {
-            ImageView ficha = (i == 0 ? P1 : i == 1 ? P2 : i == 2 ? P3 : P4);
+            Circle ficha = (i == 0 ? P1 : i == 1 ? P2 : i == 2 ? P3 : P4);
             moverFicha(ficha, jugadores.get(i).getPosicion());
         }
     }

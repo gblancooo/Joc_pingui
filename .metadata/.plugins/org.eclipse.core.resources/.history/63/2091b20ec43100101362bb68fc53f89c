@@ -1,0 +1,183 @@
+package vista;
+
+import controlador.gestorTablero;
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import modelo.Casilla;
+import modelo.Evento;
+import modelo.Jugador;
+import modelo.Tablero;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
+public class pantallaJuegoController {
+
+    @FXML private MenuItem newGame;
+    @FXML private MenuItem saveGame;
+    @FXML private MenuItem loadGame;
+    @FXML private MenuItem quitGame;
+
+    @FXML private GridPane tablero;
+    @FXML private ImageView P1, P2, P3, P4;
+
+    @FXML private Text dadoResultText;
+    @FXML private Button dado;
+    @FXML private Text rapido_t, lento_t, peces_t, nieve_t;
+    @FXML private Button rapido, lento, peces, nieve;
+    @FXML private Text eventos;
+
+    private List<Jugador> jugadores;
+    private Jugador jugadorActual;
+    private int turnoActual = 0;
+    private gestorTablero gestorTablero;
+    private Random rnd = new Random();
+
+    private int bolasNieveUsadas = 0;
+
+    private Image imgBlue, imgRed, imgGreen, imgYellow;
+
+    public void initialize() {
+        gestorTablero = new gestorTablero();
+
+        // Cargar imágenes desde resources/images/
+        imgBlue = new Image(getClass().getResourceAsStream("/images/penguin_blue.png"));
+        imgRed = new Image(getClass().getResourceAsStream("/images/penguin_red.png"));
+        imgGreen = new Image(getClass().getResourceAsStream("/images/penguin_green.png"));
+        imgYellow = new Image(getClass().getResourceAsStream("/images/penguin_yellow.png"));
+
+        // Asignar imágenes a los ImageView
+        P1.setImage(imgBlue);
+        P2.setImage(imgRed);
+        P3.setImage(imgGreen);
+        P4.setImage(imgYellow);
+
+        moverFicha(P1, 0);
+        moverFicha(P2, 0);
+        moverFicha(P3, 0);
+        moverFicha(P4, 0);
+    }
+
+    public void setJugadores(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+        this.turnoActual = 0;
+        this.jugadorActual = jugadores.get(0);
+        this.bolasNieveUsadas = 0;
+        dibujarTablero();
+        actualizarVista();
+    }
+
+    private void dibujarTablero() {
+        tablero.getChildren().clear();
+        int cols = 5;
+
+        for (int i = 0; i < Tablero.NUM_CASILLAS; i++) {
+            int row = i / cols;
+            int col = i % cols;
+
+            Casilla casilla = gestorTablero.getTablero().getCasilla(i);
+            String tipo = casilla.getTipo();
+
+            String texto = switch (tipo) {
+                case "OSO"          -> i + " (oso)";
+                case "AGUJERO"      -> i + " (agujero)";
+                case "FELIZ"        -> i + " (feliz)";
+                case "TRAMPA"       -> i + " (trampa)";
+                case "NIEVE"        -> i + " (nieve)";
+                case "TORBELLINO"   -> i + " (torbellino)";
+                default             -> Integer.toString(i);
+            };
+
+            Text textoCasilla = new Text(texto);
+            tablero.add(textoCasilla, col, row);
+            GridPane.setHalignment(textoCasilla, HPos.CENTER);
+        }
+
+        // Añadir fichas en posiciones iniciales, para todos jugadores
+        moverFicha(P1, jugadores.get(0).getPosicion());
+        moverFicha(P2, jugadores.get(1).getPosicion());
+        moverFicha(P3, jugadores.get(2).getPosicion());
+        moverFicha(P4, jugadores.get(3).getPosicion());
+    }
+
+    private void moverFicha(ImageView ficha, int posicion) {
+        int cols = 5;
+        int row = posicion / cols;
+        int col = posicion % cols;
+
+        // Remover la ficha para añadirla en la nueva posición
+        tablero.getChildren().remove(ficha);
+        tablero.add(ficha, col, row);
+        GridPane.setHalignment(ficha, HPos.CENTER);
+    }
+
+    @FXML
+    private void handleDado(ActionEvent event) {
+        int tirada = rnd.nextInt(6) + 1;
+        dadoResultText.setText("Ha salido: " + tirada);
+
+        // Mover el jugador actual
+        Jugador jugador = jugadores.get(turnoActual);
+        int nuevaPos = Math.min(jugador.getPosicion() + tirada, Tablero.NUM_CASILLAS - 1);
+        jugador.setPosicion(nuevaPos);
+
+        moverFicha(obtenerFichaPorJugador(turnoActual), nuevaPos);
+
+        eventos.setText("Jugador " + (turnoActual + 1) + " avanzó " + tirada + " posiciones.");
+
+        // Pasar al siguiente turno
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        jugadorActual = jugadores.get(turnoActual);
+    }
+
+    private ImageView obtenerFichaPorJugador(int idx) {
+        return switch (idx) {
+            case 0 -> P1;
+            case 1 -> P2;
+            case 2 -> P3;
+            case 3 -> P4;
+            default -> null;
+        };
+    }
+
+    private void actualizarVista() {
+        Jugador j = jugadorActual;
+        rapido_t.setText("Dado rápido: " + j.getDadoRapido());
+        lento_t.setText("Dado lento: " + j.getDadoLento());
+        peces_t.setText("Peces: " + j.getPeces());
+        nieve_t.setText("Bolas de nieve: " + j.getBolasNieve());
+    }
+
+    // Métodos para los botones de habilidades (solo ejemplos)
+    @FXML
+    private void handleRapido(ActionEvent event) {
+        // lógica para dado rápido
+        eventos.setText("Usó dado rápido");
+    }
+
+    @FXML
+    private void handleLento(ActionEvent event) {
+        eventos.setText("Usó dado lento");
+    }
+
+    @FXML
+    private void handlePeces(ActionEvent event) {
+        eventos.setText("Usó peces");
+    }
+
+    @FXML
+    private void handleNieve(ActionEvent event) {
+        eventos.setText("Usó bola de nieve");
+    }
+}

@@ -124,37 +124,27 @@
               <font><Font size="30.0" /></font>
             </Text>
 
-            <ImageView fx:id="P1" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(one-pass-box, black, 4, 0.0, 0, 1);">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="0" />
-              </GridPane.margin>
+            <ImageView fx:id="P1" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" 
+                       GridPane.margin="Insets(0,0,0,0)" 
+                       style="-fx-effect: dropshadow(one-pass-box, black, 4, 0.0, 0, 1);">
               <image>
                 <Image url="@img/penguin_blue.png" />
               </image>
             </ImageView>
 
-            <ImageView fx:id="P2" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="40" />
-              </GridPane.margin>
+            <ImageView fx:id="P2" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" GridPane.margin="Insets(0,0,0,40)">
               <image>
                 <Image url="@img/penguin_red.png" />
               </image>
             </ImageView>
 
-            <ImageView fx:id="P3" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="80" />
-              </GridPane.margin>
+            <ImageView fx:id="P3" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" GridPane.margin="Insets(0,0,0,80)">
               <image>
                 <Image url="@img/penguin_green.png" />
               </image>
             </ImageView>
 
-            <ImageView fx:id="P4" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-              <GridPane.margin>
-                <Insets top="0" right="0" bottom="0" left="120" />
-              </GridPane.margin>
+            <ImageView fx:id="P4" fitWidth="30.0" fitHeight="30.0" pickOnBounds="true" preserveRatio="true" GridPane.margin="Insets(0,0,0,120)">
               <image>
                 <Image url="@img/penguin_yellow.png" />
               </image>
