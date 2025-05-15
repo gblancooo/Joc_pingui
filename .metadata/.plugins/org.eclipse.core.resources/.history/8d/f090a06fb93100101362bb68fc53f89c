@@ -1,0 +1,39 @@
+<GridPane fx:id="tablero" gridLinesVisible="true" prefHeight="900.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+  <columnConstraints>
+    <ColumnConstraints prefWidth="100.0" />
+    <ColumnConstraints prefWidth="100.0" />
+    <ColumnConstraints prefWidth="100.0" />
+    <ColumnConstraints prefWidth="100.0" />
+    <ColumnConstraints prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+    <RowConstraints prefHeight="30.0" />
+  </rowConstraints>
+  <children>
+    <Text text="Start">
+      <font><Font size="30.0" /></font>
+    </Text>
+    <Text text="Finish" GridPane.columnIndex="4" GridPane.rowIndex="9">
+      <font><Font size="30.0" /></font>
+    </Text>
+    <Circle fx:id="P1" fill="BLUE" radius="15.0" stroke="BLACK" strokeType="INSIDE" />
+    <Circle fx:id="P2" fill="RED" radius="15.0" stroke="BLACK" strokeType="INSIDE">
+      <GridPane.margin><Insets left="40.0" /></GridPane.margin>
+    </Circle>
+    <Circle fx:id="P3" fill="GREEN" radius="15.0" stroke="BLACK" strokeType="INSIDE">
+      <GridPane.margin><Insets left="80.0" /></GridPane.margin>
+    </Circle>
+    <Circle fx:id="P4" fill="YELLOW" radius="15.0" stroke="BLACK" strokeType="INSIDE">
+      <GridPane.margin><Insets left="120.0" /></GridPane.margin>
+    </Circle>
+  </children>
+</GridPane>
