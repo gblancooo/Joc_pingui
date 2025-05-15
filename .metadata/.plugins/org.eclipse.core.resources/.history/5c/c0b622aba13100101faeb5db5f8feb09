@@ -1,0 +1,12 @@
+package vista;
+
+import javafx.fxml.FXML;
+
+public class pantallaPrincipalController {
+    @FXML private void onNuevoJuego() {
+        pantallaSeleccionJugadoresController.cargar();
+    }
+    @FXML private void onCargarJuego() {
+        // implementar carrega
+    }
+}

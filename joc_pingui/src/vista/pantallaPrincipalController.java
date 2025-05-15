@@ -1,16 +1,15 @@
 package vista;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
 
 public class pantallaPrincipalController {
 
@@ -21,73 +20,52 @@ public class pantallaPrincipalController {
 
     @FXML private TextField userField;
     @FXML private PasswordField passField;
-
     @FXML private Button loginButton;
     @FXML private Button registerButton;
 
     @FXML
-    private void initialize() {
-        // This method is called automatically after the FXML is loaded
-        // You can set initial values or add listeners here
-        System.out.println("pantallaPrincipalController initialized");
-    }
+    private void handleNewGame(ActionEvent event) { /* ... */ }
 
     @FXML
-    private void handleNewGame() {
-        System.out.println("New Game clicked");
-        // TODO
-    }
+    private void handleSaveGame(ActionEvent event) { /* ... */ }
 
     @FXML
-    private void handleSaveGame() {
-        System.out.println("Save Game clicked");
-        // TODO
-    }
+    private void handleLoadGame(ActionEvent event) { /* ... */ }
 
     @FXML
-    private void handleLoadGame() {
-        System.out.println("Load Game clicked");
-        // TODO
-    }
-
-    @FXML
-    private void handleQuitGame() {
-        System.out.println("Quit Game clicked");
-        // TODO
+    private void handleQuitGame(ActionEvent event) {
         System.exit(0);
     }
-    
+
+    /** Ara sí: al fer Login carreguem la següent FXML */
     @FXML
     private void handleLogin(ActionEvent event) {
-        String username = userField.getText();
-        String password = passField.getText();
+        String user = userField.getText();
+        String pass = passField.getText();
 
-        System.out.println("Login pressed: " + username + " / " + password);
+        // (Opcional) valida usuari/pass aquí abans de continuar...
 
-        // Basic check (just for demo, replace with real login logic)
-        if (!username.isEmpty() && !password.isEmpty()) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaJuego.fxml"));
-                Parent pantallaJuegoRoot = loader.load();
-
-                Scene pantallaJuegoScene = new Scene(pantallaJuegoRoot);
-
-                // Get the current stage using the event
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(pantallaJuegoScene);
-                stage.setTitle("Pantalla de Juego");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Please. Enter user and password.");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaSeleccionJugadores.fxml"));
+            Scene escena = new Scene(loader.load());
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.setScene(escena);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-
+    /** I si vols que el registre també porti a una altra pantalla: */
     @FXML
-    private void handleRegister() {
-        System.out.println("Register pressed");
-        // TODO
+    private void handleRegister(ActionEvent event) {
+        try {
+            // per exemple, tornar al mateix FXML de registre o una vista d’alta
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaRegistro.fxml"));
+            Scene escena = new Scene(loader.load());
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.setScene(escena);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

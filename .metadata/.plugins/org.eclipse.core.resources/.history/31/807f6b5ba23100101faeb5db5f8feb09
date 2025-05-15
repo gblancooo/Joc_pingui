@@ -1,0 +1,77 @@
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import controlador.gestorTablero;
+import modelo.*;
+import java.util.Random;
+
+public class pantallaJuegoController {
+    @FXML private Label lblJugador, lblPosicion, lblDados, lblPeces, lblBolas;
+    @FXML private Button btnDadoNormal, btnDadoRapido, btnDadoLento, btnBolaNieve;
+
+    private Jugador jugador;
+    private gestorTablero gestorTablero;
+    private Random rnd = new Random();
+
+    public void initialize() {
+        gestorTablero = new gestorTablero();
+        jugador = new Jugador("Ana","Blau");
+        actualizarVista();
+    }
+
+    private void actualizarVista() {
+        lblJugador.setText(jugador.getNombre()+" ("+jugador.getColor()+")");
+        lblPosicion.setText("Posició: "+jugador.getPosicion());
+        lblDados .setText("Daus: "+jugador.getInventario().getDados());
+        lblPeces .setText("Peces: "+jugador.getInventario().getPeces());
+        lblBolas .setText("Boles: "+jugador.getInventario().getBolasNieve());
+        btnDadoNormal.setDisable(jugador.getInventario().getDados()==0);
+        btnDadoRapido.setDisable(jugador.getInventario().getDados()==0);
+        btnDadoLento .setDisable(jugador.getInventario().getDados()==0);
+        btnBolaNieve .setDisable(jugador.getInventario().getBolasNieve()==0);
+    }
+
+    @FXML private void tirarDadoNormal() {
+        if (jugador.getInventario().usarDado()) mover(rnd.nextInt(6)+1);
+        actualizarVista();
+    }
+    @FXML private void tirarDadoRapido() {
+        if (jugador.getInventario().usarDado()) mover(5+rnd.nextInt(6));
+        actualizarVista();
+    }
+    @FXML private void tirarDadoLento() {
+        if (jugador.getInventario().usarDado()) mover(1+rnd.nextInt(3));
+        actualizarVista();
+    }
+    @FXML private void lanzarBolaNieve() {
+        if (jugador.getInventario().usarBola()) {
+            jugador.mover(-1);
+        }
+        actualizarVista();
+    }
+
+    private void mover(int pasos) {
+        jugador.mover(pasos);
+        Casilla c = gestorTablero.getTablero().getCasilla(jugador.getPosicion());
+        switch(c.getTipo()) {
+            case "OSO":
+                if (!jugador.getInventario().usarPez()) jugador.setPosicion(0);
+                break;
+            case "AGUJERO":
+                for (int i=jugador.getPosicion()-1;i>=0;i--)
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("AGUJERO"))
+                        jugador.setPosicion(i);
+                break;
+            case "TRINEO":
+                for (int i=jugador.getPosicion()+1;i<gestorTablero.getTablero().NUM_CASILLAS;i++)
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("TRINEO"))
+                        jugador.setPosicion(i);
+                break;
+            case "INTERROGANTE":
+                Evento.activarEvento(jugador);
+                break;
+            default: break;
+        }
+    }
+}

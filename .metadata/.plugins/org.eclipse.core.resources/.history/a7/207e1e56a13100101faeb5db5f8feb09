@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<VBox spacing="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="vista.pantallaJuegoController">
+    <Label fx:id="lblJugador"/>
+    <Label fx:id="lblPosicion"/>
+    <HBox spacing="5">
+        <Button fx:id="btnDadoNormal" text="Dau Normal" onAction="#tirarDadoNormal"/>
+        <Button fx:id="btnDadoRapido" text="Dau Ràpid" onAction="#tirarDadoRapido"/>
+        <Button fx:id="btnDadoLento"  text="Dau Lent"  onAction="#tirarDadoLento"/>
+        <Button fx:id="btnBolaNieve" text="Bola Neu" onAction="#lanzarBolaNieve"/>
+    </HBox>
+    <Label fx:id="lblDados"/>
+    <Label fx:id="lblPeces"/>
+    <Label fx:id="lblBolas"/>
+</VBox>

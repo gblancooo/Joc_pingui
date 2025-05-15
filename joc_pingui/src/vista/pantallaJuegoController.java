@@ -1,131 +1,183 @@
 package vista;
 
-import java.util.Random;
-
+import controlador.gestorTablero;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.geometry.HPos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import modelo.Casilla;
+import modelo.Evento;
+import modelo.Jugador;
+import modelo.Tablero;  // <— importa Tablero
+
+import java.util.List;
+import java.util.Random;
 
 public class pantallaJuegoController {
 
-    // Menu items
     @FXML private MenuItem newGame;
     @FXML private MenuItem saveGame;
     @FXML private MenuItem loadGame;
     @FXML private MenuItem quitGame;
 
-    // Buttons
-    @FXML private Button dado;
-    @FXML private Button rapido;
-    @FXML private Button lento;
-    @FXML private Button peces;
-    @FXML private Button nieve;
+    @FXML private GridPane tablero;
+    @FXML private Circle P1, P2, P3, P4;
 
-    // Texts
     @FXML private Text dadoResultText;
-    @FXML private Text rapido_t;
-    @FXML private Text lento_t;
-    @FXML private Text peces_t;
-    @FXML private Text nieve_t;
+    @FXML private Button dado;
+    @FXML private Text rapido_t, lento_t, peces_t, nieve_t;
+    @FXML private Button rapido, lento, peces, nieve;
     @FXML private Text eventos;
 
-    // Game board and player pieces
-    @FXML private GridPane tablero;
-    @FXML private Circle P1;
-    @FXML private Circle P2;
-    @FXML private Circle P3;
-    @FXML private Circle P4;
-    
-    //ONLY FOR TESTING!!!
-    private int p1Position = 0; // Tracks current position (from 0 to 49 in a 5x10 grid)
-    private final int COLUMNS = 5;
+    private List<Jugador> jugadores;
+    private Jugador jugadorActual;
+    private int turnoActual = 0;
+    private gestorTablero gestorTablero;
+    private Random rnd = new Random();
 
-    @FXML
-    private void initialize() {
-        // This method is called automatically after the FXML is loaded
-        // You can set initial values or add listeners here
-        eventos.setText("¡El juego ha comenzado!");
+    public void initialize() {
+        gestorTablero = new gestorTablero();
     }
 
-    // Button and menu actions
-
-    @FXML
-    private void handleNewGame() {
-        System.out.println("New game.");
-        // TODO
+    public void setJugadores(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+        this.turnoActual = 0;
+        this.jugadorActual = jugadores.get(0);
+        dibujarTablero();
+        actualizarVista();
     }
 
-    @FXML
-    private void handleSaveGame() {
-        System.out.println("Saved game.");
-        // TODO
-    }
-
-    @FXML
-    private void handleLoadGame() {
-        System.out.println("Loaded game.");
-        // TODO
-    }
-
-    @FXML
-    private void handleQuitGame() {
-        System.out.println("Exit...");
-        // TODO
-    }
-
-    @FXML
-    private void handleDado(ActionEvent event) {
-        Random rand = new Random();
-        int diceResult = rand.nextInt(6) + 1;
-
-        // Update the Text 
-        dadoResultText.setText("Ha salido: " + diceResult);
-
-        // Update the position
-        moveP1(diceResult);
-    }
-
-    private void moveP1(int steps) {
-        p1Position += steps;
-
-        //Bound player
-        if (p1Position >= 50) {
-            p1Position = 49; // 5 columns * 10 rows = 50 cells (index 0 to 49)
+    private void dibujarTablero() {
+        tablero.getChildren().clear();
+        int cols = 5;
+        for (int i = 0; i < Tablero.NUM_CASILLAS; i++) {
+            int row = i / cols;
+            int col = i % cols;
+            Text txt = new Text(String.valueOf(i));
+            GridPane.setHalignment(txt, HPos.CENTER);
+            tablero.add(txt, col, row);
         }
+    }
 
-        //Check row and column
-        int row = p1Position / COLUMNS;
-        int col = p1Position % COLUMNS;
+    private void moverFicha(Circle ficha, int posicion) {
+        int cols = 5;
+        int row = posicion / cols;
+        int col = posicion % cols;
+        GridPane.setRowIndex(ficha, row);
+        GridPane.setColumnIndex(ficha, col);
+    }
 
-        //Change P1 property to match row and column
-        GridPane.setRowIndex(P1, row);
-        GridPane.setColumnIndex(P1, col);
+    private void actualizarVista() {
+        rapido_t.setText("Dado rápido: " + jugadorActual.getInventario().getDados());
+        lento_t .setText("Dado lento: "  + jugadorActual.getInventario().getDados());
+        peces_t .setText("Peces: "        + jugadorActual.getInventario().getPeces());
+        nieve_t .setText("Bolas de nieve: "+ jugadorActual.getInventario().getBolasNieve());
+
+        rapido.setDisable(jugadorActual.getInventario().getDados() == 0);
+        lento .setDisable(jugadorActual.getInventario().getDados() == 0);
+        peces .setDisable(jugadorActual.getInventario().getPeces() == 0);
+        nieve .setDisable(jugadorActual.getInventario().getBolasNieve() == 0);
+
+        for (int i = 0; i < jugadores.size(); i++) {
+            Circle ficha = (i == 0 ? P1 : i == 1 ? P2 : i == 2 ? P3 : P4);
+            moverFicha(ficha, jugadores.get(i).getPosicion());
+        }
+    }
+
+    private void procesarMovimiento(int pasos) {
+        jugadorActual.mover(pasos);
+        Casilla cas = gestorTablero.getTablero().getCasilla(jugadorActual.getPosicion());
+        switch (cas.getTipo()) {
+            case "OSO":
+                if (!jugadorActual.getInventario().usarPez()) {
+                    jugadorActual.setPosicion(0);
+                }
+                eventos.setText("Ha caído en OSO");
+                break;
+            case "AGUJERO":
+                int pos = jugadorActual.getPosicion();
+                for (int i = pos - 1; i >= 0; i--) {
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("AGUJERO")) {
+                        jugadorActual.setPosicion(i);
+                        break;
+                    }
+                }
+                eventos.setText("Ha caído en AGUJERO");
+                break;
+            case "TRINEO":
+                pos = jugadorActual.getPosicion();
+                for (int i = pos + 1; i < Tablero.NUM_CASILLAS; i++) {
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("TRINEO")) {
+                        jugadorActual.setPosicion(i);
+                        break;
+                    }
+                }
+                eventos.setText("Ha usado TRINEO");
+                break;
+            case "INTERROGANTE":
+                Evento.activarEvento(jugadorActual);
+                eventos.setText("Evento aleatorio activado");
+                break;
+            default:
+                eventos.setText("");
+        }
+        dadoResultText.setText("Ha salido: " + pasos);
+    }
+
+    private void siguienteTurno() {
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        jugadorActual = jugadores.get(turnoActual);
+        actualizarVista();
+    }
+
+    @FXML private void handleNewGame(ActionEvent e)  { /* ... */ }
+    @FXML private void handleSaveGame(ActionEvent e) { /* ... */ }
+    @FXML private void handleLoadGame(ActionEvent e) { /* ... */ }
+    @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
+
+    @FXML
+    private void handleDado(ActionEvent e) {
+        int tirada = rnd.nextInt(6) + 1;
+        procesarMovimiento(tirada);
+        siguienteTurno();
     }
 
     @FXML
-    private void handleRapido() {
-        System.out.println("Fast.");
-        // TODO
+    private void handleRapido(ActionEvent e) {
+        if (jugadorActual.getInventario().usarDado()) {
+            int tirada = 5 + rnd.nextInt(6);
+            procesarMovimiento(tirada);
+            siguienteTurno();
+        }
     }
 
     @FXML
-    private void handleLento() {
-        System.out.println("Slow.");
-        // TODO
+    private void handleLento(ActionEvent e) {
+        if (jugadorActual.getInventario().usarDado()) {
+            int tirada = 1 + rnd.nextInt(3);
+            procesarMovimiento(tirada);
+            siguienteTurno();
+        }
     }
 
     @FXML
-    private void handlePeces() {
-        System.out.println("Fish.");
-        // TODO
+    private void handlePeces(ActionEvent e) {
+        // opcional: suborno a l’ós
     }
 
     @FXML
-    private void handleNieve() {
-        System.out.println("Snow.");
-        // TODO
+    private void handleNieve(ActionEvent e) {
+        if (jugadorActual.getInventario().usarBola()) {
+            int victima = (turnoActual + 1) % jugadores.size();
+            jugadores.get(victima).mover(-1);
+            siguienteTurno();
+        }
     }
 }

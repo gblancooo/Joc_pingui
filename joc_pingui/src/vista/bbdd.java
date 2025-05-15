@@ -1,164 +1,126 @@
+// src/vista/bbdd.java
 package vista;
 
+import modelo.Jugador;
+import modelo.Tablero;
+import modelo.Casilla;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.file.*;
 import java.sql.*;
-import java.util.Scanner;
+import java.util.Base64;
 
-
-/**
- * Clase que proporciona métodos para interactuar con una base de datos Oracle.
- */
 public class bbdd {
+    private static final String URL = "jdbc:sqlite:pingui.db";
+    private static final String KEY = "MiClaveSecreta12"; // 16 chars
 
+    // Crear taula si no existeix
+    static {
+        try (Connection conn = DriverManager.getConnection(URL);
+             Statement st = conn.createStatement()) {
+            st.execute("CREATE TABLE IF NOT EXISTS partida(" +
+                    "id INTEGER PRIMARY KEY, " +
+                    "jugadores TEXT, " +      // JSON encriptat
+                    "tablero TEXT)");         // JSON encriptat
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    private static String encriptar(String texto) throws Exception {
+        SecretKeySpec key = new SecretKeySpec(KEY.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] enc = cipher.doFinal(texto.getBytes());
+        return Base64.getEncoder().encodeToString(enc);
+    }
 
-    /**
-     * Intenta establecer una conexión a la base de datos Oracle. NO HACE FALTA QUE ENTENDAIS COMO FUNCIONA,
-     * SE HACE TODO DE MANERA AUTOMÁTICA.
-     *
-     * @return Objeto Connection si la conexión es exitosa, null en caso contrario. LA VARIABLE QUE DEVUELVE
-     * LA TENEIS QUE GUARDAR PARA LAS DEMÁS FUNCIONES
-     */
-	public static Connection conectarBaseDatos() {
-		Connection con = null;
+    private static String desencriptar(String base64) throws Exception {
+        SecretKeySpec key = new SecretKeySpec(KEY.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        byte[] dec = Base64.getDecoder().decode(base64);
+        return new String(cipher.doFinal(dec));
+    }
 
-		System.out.println("Intentando conectarse a la base de datos");
-		
-		System.out.println("Selecciona centro o fuera de centro: (CENTRO/FUERA)");
-		
-		Scanner scan = new Scanner(System.in);
-		
-		String s = scan.nextLine();
-		
-		s = s.toLowerCase();
-		
-		String URL;
+    public static void guardarPartida(int id, Jugador[] jugadores, Tablero tablero) {
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement ps = conn.prepareStatement(
+                 "REPLACE INTO partida(id, jugadores, tablero) VALUES(?,?,?)")) {
 
-		if(s.equals("centro")) {
-			URL = "jdbc:oracle:thin:@//192.168.3.26:1521/XEPDB2";
-		} else {
-			URL = "jdbc:oracle:thin:@//oracle.ilerna.com:1521/XEPDB2";
-		}
-		
-		System.out.println("DM2425_PIN_GRUP05");
-		String USER = scan.nextLine();
-		
-		System.out.println("ABGLT05");
-		String PWD = scan.nextLine();
-		
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			con = DriverManager.getConnection(URL, USER, PWD);
-		} catch (ClassNotFoundException e) {
-			System.out.println("No se ha encontrado el driver " + e);
-		} catch (SQLException e) {
-			System.out.println("Error en las credenciales o en la URL " + e);
-		}
+            // Convertir estat a JSON (pots usar la llibreria que vulguis)
+            String jJug = toJsonJugadores(jugadores);
+            String jTab = toJsonTablero(tablero);
 
-		System.out.println("Conectados a la base de datos");
+            ps.setString(1, Integer.toString(id));
+            ps.setString(2, encriptar(jJug));
+            ps.setString(3, encriptar(jTab));
+            ps.executeUpdate();
 
-		return con;
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    /**
-     * Realiza una inserción en la base de datos.
-     *
-     * @param con Objeto Connection que representa la conexión a la base de datos.
-     * @param sql Sentencia SQL de inserción que hayais creado.
-     */
-	public static void insert(Connection con, String sql) {
-		try {
-			Statement st = con.createStatement();
-			st.execute(sql);
-			
-			System.out.println("Insert hecho correctamente");
-		} catch (SQLException e) {
-			System.out.println("Ha habido un error en el Insert " + e);
-		}
-	}
-	
-    /**
-     * Realiza una actualización en la base de datos.
-     *
-     * @param con Objeto Connection que representa la conexión a la base de datos.
-     * @param sql Sentencia SQL de actualización que hayais creado.
-     */
-	public static void update(Connection con, String sql) {
-		try {
-			Statement st = con.createStatement();
-			st.execute(sql);
-			
-			System.out.println("Update hecho correctamente");
-		} catch (SQLException e) {
-			System.out.println("Ha habido un error en el Update " + e);
-		}
-	}
-	
-    /**
-     * Realiza una eliminación en la base de datos.
-     *
-     * @param con Objeto Connection que representa la conexión a la base de datos.
-     * @param sql Sentencia SQL de eliminación que hayais creado.
-     */
-	public static void delete(Connection con, String sql) {
-		try {
-			Statement st = con.createStatement();
-			st.execute(sql);
-			
-			System.out.println("Delete hecho correctamente");
-		} catch (SQLException e) {
-			System.out.println("Ha habido un error en el Delete " + e);
-		}
-	}
-	
-    /**
-     * Realiza una consulta en la base de datos y devuelve los resultados como un ResultSet
-     *
-     * @param con                         Objeto Connection que representa la conexión a la base de datos.
-     * @param sql                         Sentencia SQL de consulta.
-     * @param listaElementosSeleccionados Array de Strings con los nombres de las columnas seleccionadas.
-     * @return ResultSet con la query hecha
-     */
-	public static ResultSet select(Connection con, String sql) {
-		try {
-			Statement st = con.createStatement();
-			return st.executeQuery(sql);
+    public static Partida cargarPartida(int id) {
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement ps = conn.prepareStatement(
+                 "SELECT jugadores, tablero FROM partida WHERE id = ?")) {
 
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		System.out.println("Unexpected error");
-		return null;
-	}
-	
-    /**
-     * Imprime los resultados de una consulta SELECT en la base de datos.
-     * EN ESTE CASO SI PODEIS IMPRIMIR MÁS DE UNA FILA.
-     *
-     * @param con                         Objeto Connection que representa la conexión a la base de datos.
-     * @param sql                         Sentencia SQL de consulta.
-     * @param listaElementosSeleccionados Array de Strings con los nombres de las columnas seleccionadas.
-     */
-	public static void print(Connection con, String sql, String[] listaElementosSeleccionados) {
-		try {
-				Statement st = con.createStatement();
-				ResultSet rs = st.executeQuery(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String jJugEnc = rs.getString("jugadores");
+                String jTabEnc = rs.getString("tablero");
 
-				if (rs.isBeforeFirst()) {
-					while (rs.next()) {
-						for (int i = 0; i < listaElementosSeleccionados.length; i++) {
-							System.out.println(listaElementosSeleccionados[i] + 
-									": " + rs.getString(listaElementosSeleccionados[i]));
-						}
-					}
-				} else {
-					System.out.println("No se ha encontrado nada");
-				}
+                String jJug = desencriptar(jJugEnc);
+                String jTab = desencriptar(jTabEnc);
 
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+                Jugador[] jugadores = fromJsonJugadores(jJug);
+                Tablero tablero = fromJsonTablero(jTab);
+                return new Partida(jugadores, tablero);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // ------ Mètodes de conversió a/desde JSON (p. ex. amb Gson o Jackson) ------
+    private static String toJsonJugadores(Jugador[] jugadores) {
+        // Exemple amb Gson:
+        // return new Gson().toJson(jugadores);
+        throw new UnsupportedOperationException("Implementa JSON aquí");
+    }
+
+    private static String toJsonTablero(Tablero tablero) {
+        // return new Gson().toJson(tablero.getCasillas());
+        throw new UnsupportedOperationException("Implementa JSON aquí");
+    }
+
+    private static Jugador[] fromJsonJugadores(String json) {
+        // return new Gson().fromJson(json, Jugador[].class);
+        throw new UnsupportedOperationException("Implementa JSON aquí");
+    }
+
+    private static Tablero fromJsonTablero(String json) {
+        // Casilla[] casillas = new Gson().fromJson(json, Casilla[].class);
+        // Tablero t = new Tablero();
+        // t.setCasillas(casillas);
+        // return t;
+        throw new UnsupportedOperationException("Implementa JSON aquí");
+    }
+
+    // Classe auxiliar per retornar l’estat carrega
+    public static class Partida {
+        private Jugador[] jugadores;
+        private Tablero tablero;
+        public Partida(Jugador[] j, Tablero t) {
+            this.jugadores = j;
+            this.tablero = t;
+        }
+        public Jugador[] getJugadores() { return jugadores; }
+        public Tablero getTablero() { return tablero; }
+    }
 }

@@ -1,0 +1,46 @@
+// src/modelo/Evento.java
+package modelo;
+
+import java.util.Random;
+
+public class Evento {
+    private static Random rnd = new Random();
+
+    /**
+     * Activa un event aleatori quan el jugador cau en una casella “INTERROGANTE”.
+     */
+    public static void activarEvento(Jugador jugador) {
+        int tipo = rnd.nextInt(4); // 0–3
+        Inventario inv = jugador.getInventario();
+
+        switch (tipo) {
+            case 0:
+                // Obtenir un peix
+                if (inv.addPez()) {
+                    System.out.println(jugador.getNombre() + " ha obtingut un peix!");
+                }
+                break;
+            case 1:
+                // Obtenir 1-3 boles de neu
+                int nBolas = 1 + rnd.nextInt(3);
+                int añadidas = 0;
+                for (int i = 0; i < nBolas; i++) {
+                    if (inv.addBola()) añadidas++;
+                }
+                System.out.println(jugador.getNombre() + " ha obtingut " + añadidas + " boles de neu!");
+                break;
+            case 2:
+                // Obtenir un dau ràpid (5-10)
+                if (inv.addDado()) {
+                    System.out.println(jugador.getNombre() + " ha obtingut un dau (ràpid)!");
+                }
+                break;
+            case 3:
+                // Obtenir un dau lent (1-3)
+                if (inv.addDado()) {
+                    System.out.println(jugador.getNombre() + " ha obtingut un dau (lent)!");
+                }
+                break;
+        }
+    }
+}

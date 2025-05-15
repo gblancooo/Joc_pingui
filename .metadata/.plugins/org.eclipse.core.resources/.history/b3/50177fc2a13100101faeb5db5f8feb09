@@ -1,0 +1,77 @@
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+
+public class pantallaPrincipalController {
+
+    // --- Controls del menú File ---
+    @FXML private MenuItem newGame;
+    @FXML private MenuItem saveGame;
+    @FXML private MenuItem loadGame;
+    @FXML private MenuItem quitGame;
+
+    // --- Controls de login/registro ---
+    @FXML private TextField userField;
+    @FXML private PasswordField passField;
+    @FXML private MenuItem loginButton;      // si els definies com Button, canvia a Button
+    @FXML private MenuItem registerButton;   // idem
+
+    /**
+     * Carrega la pantalla de selecció de jugadors (Nou Joc).
+     */
+    @FXML
+    private void handleNewGame(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaSeleccionJugadores.fxml"));
+            Scene scene = new Scene(loader.load());
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Desar la partida actual */
+    @FXML
+    private void handleSaveGame(ActionEvent event) {
+        // implementar guardat
+        System.out.println("Guardar partida (pendient d'implementar)");
+    }
+
+    /** Carregar una partida prèviament desada */
+    @FXML
+    private void handleLoadGame(ActionEvent event) {
+        // implementar carrega
+        System.out.println("Carregar partida (pendient d'implementar)");
+    }
+
+    /** Sortir de l'aplicació */
+    @FXML
+    private void handleQuitGame(ActionEvent event) {
+        System.exit(0);
+    }
+
+    /** Autenticar usuari */
+    @FXML
+    private void handleLogin(ActionEvent event) {
+        String user = userField.getText();
+        String pass = passField.getText();
+        // Aquí afegeix la teva lògica d'autenticació
+        System.out.println("Login amb " + user + " / " + pass);
+    }
+
+    /** Registrar nou usuari */
+    @FXML
+    private void handleRegister(ActionEvent event) {
+        // Lògica de registre
+        System.out.println("Registrar nou usuari");
+    }
+}

@@ -1,8 +1,20 @@
 package controlador;
 
-public class gestorPartidas {
-	private String urlBBDD;
-	private String username;
-	private String password;
+import modelo.Jugador;
+import modelo.Tablero;
+import vista.bbdd;
+import vista.bbdd.Partida;
 
+import java.util.List;
+
+public class gestorPartidas {
+
+    public void guardar(int id, List<Jugador> jugadores, Tablero tablero) {
+        Jugador[] arr = jugadores.toArray(new Jugador[0]);
+        bbdd.guardarPartida(id, arr, tablero);
+    }
+
+    public Partida cargar(int id) {
+        return bbdd.cargarPartida(id);
+    }
 }

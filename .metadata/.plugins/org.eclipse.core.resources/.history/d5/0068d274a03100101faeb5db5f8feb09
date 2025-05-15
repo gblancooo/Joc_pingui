@@ -1,0 +1,114 @@
+// src/vista/pantallaJuegoController.java
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import modelo.*;
+
+import java.util.Random;
+
+public class pantallaJuegoController {
+
+    @FXML private Label lblJugador;
+    @FXML private Label lblPosicion;
+    @FXML private Label lblDados, lblPeces, lblBolas;
+    @FXML private Button btnDadoNormal, btnDadoRapido, btnDadoLento, btnBolaNieve;
+
+    private Jugador jugador;
+    private Tablero tablero;
+    private Random rnd = new Random();
+
+    public void initialize() {
+        // Exemple d'inicialització; substitueix segons gestió real de jugadors
+        jugador = new Jugador("Ana", "Blau");
+        tablero = new Tablero();
+        actualizarVista();
+    }
+
+    private void actualizarVista() {
+        lblJugador.setText(jugador.getNombre() + " (" + jugador.getColor() + ")");
+        lblPosicion.setText("Posició: " + jugador.getPosicion());
+        lblDados.setText("Daus: " + jugador.getInventario().getDados());
+        lblPeces.setText("Peces: " + jugador.getInventario().getPeces());
+        lblBolas.setText("Boles de neu: " + jugador.getInventario().getBolasNieve());
+
+        btnDadoNormal.setDisable(jugador.getInventario().getDados() == 0);
+        btnDadoRapido.setDisable(jugador.getInventario().getDados() == 0);
+        btnDadoLento.setDisable(jugador.getInventario().getDados() == 0);
+        btnBolaNieve.setDisable(jugador.getInventario().getBolasNieve() == 0);
+    }
+
+    @FXML
+    private void tirarDadoNormal() {
+        if (jugador.getInventario().usarDado()) {
+            int tirada = rnd.nextInt(6) + 1;
+            procesarMovimiento(tirada);
+        }
+        actualizarVista();
+    }
+
+    @FXML
+    private void tirarDadoRapido() {
+        if (jugador.getInventario().usarDado()) {
+            int tirada = 5 + rnd.nextInt(6); // 5–10, prob baixa
+            procesarMovimiento(tirada);
+        }
+        actualizarVista();
+    }
+
+    @FXML
+    private void tirarDadoLento() {
+        if (jugador.getInventario().usarDado()) {
+            int tirada = 1 + rnd.nextInt(3); // 1–3, prob alta
+            procesarMovimiento(tirada);
+        }
+        actualizarVista();
+    }
+
+    @FXML
+    private void lanzarBolaNieve() {
+        if (jugador.getInventario().usarBola()) {
+            // Lògica d’atacar un altre jugador: fer-lo retrocedir 1 casella
+            // (Aquí només es desa l’efecte local)
+            jugador.mover(-1);
+        }
+        actualizarVista();
+    }
+
+    private void procesarMovimiento(int pasos) {
+        jugador.mover(pasos);
+        Casilla cas = tablero.getCasilla(jugador.getPosicion());
+        switch (cas.getTipo()) {
+            case "OSO":
+                // si no té peix, torna a inici
+                if (!jugador.getInventario().usarPez()) {
+                    jugador.setPosicion(0);
+                }
+                break;
+            case "AGUJERO":
+                // retrocedeix a l’últim forat (busquem enrere)
+                for (int i = jugador.getPosicion()-1; i >= 0; i--) {
+                    if (tablero.getCasilla(i).getTipo().equals("AGUJERO")) {
+                        jugador.setPosicion(i);
+                        break;
+                    }
+                }
+                break;
+            case "TRINEO":
+                // avança al següent trineu
+                for (int i = jugador.getPosicion()+1; i < tablero.getNumCasillas(); i++) {
+                    if (tablero.getCasilla(i).getTipo().equals("TRINEO")) {
+                        jugador.setPosicion(i);
+                        break;
+                    }
+                }
+                break;
+            case "INTERROGANTE":
+                Evento.activarEvento(jugador);
+                break;
+            default:
+                // normal: res a fer
+        }
+    }
+}

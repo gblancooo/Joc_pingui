@@ -1,0 +1,30 @@
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import controlador.GestorJugador;
+import modelo.Jugador;
+
+public class pantallaSeleccionJugadoresController {
+    @FXML private TextField txtNombre;
+    @FXML private ColorPicker pickerColor;
+    @FXML private Button btnAdd, btnStart;
+    private static GestorJugador gj = new GestorJugador();
+
+    public static void cargar() {
+        // carregar pantallaSeleccionJugadores.fxml
+    }
+
+    @FXML private void onAdd() {
+        String nom = txtNombre.getText();
+        String col = pickerColor.getValue().toString();
+        if (!nom.isEmpty()) {
+            gj.addJugador(new Jugador(nom,col));
+            txtNombre.clear();
+        }
+    }
+
+    @FXML private void onStart() {
+        // passar gj.getJugadores() a gestor de partida i obrir pantallaPartida
+    }
+}

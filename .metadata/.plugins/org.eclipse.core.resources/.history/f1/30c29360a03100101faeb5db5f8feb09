@@ -1,0 +1,69 @@
+// src/modelo/Inventario.java
+package modelo;
+
+public class Inventario {
+    private int dados;      // dies normals o especials
+    private int peces;      // per subornar l'ós
+    private int bolasNieve; // per atacar altres
+
+    private static final int MAX_DADOS = 3;
+    private static final int MAX_PECES = 2;
+    private static final int MAX_BOLAS = 6;
+
+    public Inventario() {
+        this.dados = 0;
+        this.peces = 0;
+        this.bolasNieve = 0;
+    }
+
+    // DAUS
+    public boolean addDado() {
+        if (dados < MAX_DADOS) {
+            dados++;
+            return true;
+        }
+        return false;
+    }
+    public boolean usarDado() {
+        if (dados > 0) {
+            dados--;
+            return true;
+        }
+        return false;
+    }
+    public int getDados() { return dados; }
+
+    // PECES
+    public boolean addPez() {
+        if (peces < MAX_PECES) {
+            peces++;
+            return true;
+        }
+        return false;
+    }
+    public boolean usarPez() {
+        if (peces > 0) {
+            peces--;
+            return true;
+        }
+        return false;
+    }
+    public int getPeces() { return peces; }
+
+    // BOLAS DE NEU
+    public boolean addBola() {
+        if (bolasNieve < MAX_BOLAS) {
+            bolasNieve++;
+            return true;
+        }
+        return false;
+    }
+    public boolean usarBola() {
+        if (bolasNieve > 0) {
+            bolasNieve--;
+            return true;
+        }
+        return false;
+    }
+    public int getBolasNieve() { return bolasNieve; }
+}

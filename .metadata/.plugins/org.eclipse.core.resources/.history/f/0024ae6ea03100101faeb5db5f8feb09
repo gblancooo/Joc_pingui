@@ -1,0 +1,61 @@
+// src/modelo/Tablero.java
+package modelo;
+
+import java.util.*;
+
+public class Tablero {
+    public static final int NUM_CASILLAS = 50;
+    private Casilla[] casillas;
+
+    public Tablero() {
+        this.casillas = new Casilla[NUM_CASILLAS];
+        generarCasillasAleatorias();
+    }
+
+    private void generarCasillasAleatorias() {
+        List<Integer> posiciones = new ArrayList<>();
+        for (int i = 0; i < NUM_CASILLAS; i++) posiciones.add(i);
+        Collections.shuffle(posiciones);
+
+        asignarCasillas(posiciones, 5, "OSO");
+        asignarCasillas(posiciones, 5, "AGUJERO");
+        asignarCasillas(posiciones, 5, "TRINEO");
+        asignarCasillas(posiciones, 5, "INTERROGANTE");
+
+        for (int i = 0; i < NUM_CASILLAS; i++) {
+            if (casillas[i] == null) {
+                casillas[i] = new Casilla(i, "NORMAL");
+            }
+        }
+    }
+
+    private void asignarCasillas(List<Integer> posiciones, int cantidad, String tipo) {
+        for (int i = 0; i < cantidad; i++) {
+            int pos = posiciones.remove(0);
+            casillas[pos] = new Casilla(pos, tipo);
+        }
+    }
+
+    public Casilla getCasilla(int posicion) {
+        if (posicion < 0) return casillas[0];
+        if (posicion >= NUM_CASILLAS) return casillas[NUM_CASILLAS - 1];
+        return casillas[posicion];
+    }
+
+    public Casilla[] getCasillas() {
+        return casillas;
+    }
+
+    /** Permet reconstruir un taulell a partir d’un array extern (útil per a la càrrega). */
+    public void setCasillas(Casilla[] casillas) {
+        if (casillas.length == NUM_CASILLAS) {
+            this.casillas = casillas;
+        } else {
+            throw new IllegalArgumentException("Array de caselles de mida incorrecta");
+        }
+    }
+
+    public int getNumCasillas() {
+        return NUM_CASILLAS;
+    }
+}

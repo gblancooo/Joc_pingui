@@ -1,0 +1,16 @@
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+
+public class pantallaMenu {
+    @FXML private Button btnJugar, btnSalir;
+
+    @FXML private void onJugar() {
+        // carregar vista de selecció jugadors
+        pantallaSelector.cargar();
+    }
+    @FXML private void onSalir() {
+        System.exit(0);
+    }
+}
