@@ -30,6 +30,7 @@ public class pantallaJuegoController {
     @FXML private MenuItem quitGame;
 
     @FXML private GridPane tablero;
+    // Cambiado de Circle a ImageView
     @FXML private ImageView P1, P2, P3, P4;
 
     @FXML private Text dadoResultText;
@@ -55,11 +56,15 @@ public class pantallaJuegoController {
         P3.setImage(new Image(getClass().getResourceAsStream("/images/penguin_green.png")));
         P4.setImage(new Image(getClass().getResourceAsStream("/images/penguin_yellow.png")));
 
-        // Ajustar tamaño de imagen
-        P1.setFitWidth(30); P1.setFitHeight(30);
-        P2.setFitWidth(30); P2.setFitHeight(30);
-        P3.setFitWidth(30); P3.setFitHeight(30);
-        P4.setFitWidth(30); P4.setFitHeight(30);
+        // Ajustar tamaño de imagen (opcional)
+        P1.setFitWidth(30);
+        P1.setFitHeight(30);
+        P2.setFitWidth(30);
+        P2.setFitHeight(30);
+        P3.setFitWidth(30);
+        P3.setFitHeight(30);
+        P4.setFitWidth(30);
+        P4.setFitHeight(30);
 
         moverFicha(P1, 0);
         moverFicha(P2, 0);
@@ -87,6 +92,7 @@ public class pantallaJuegoController {
             Casilla casilla = gestorTablero.getTablero().getCasilla(i);
             String tipo = casilla.getTipo();
 
+            // Contenedor horizontal para número + imagen
             javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(5);
             hbox.setAlignment(javafx.geometry.Pos.CENTER);
 
@@ -94,12 +100,13 @@ public class pantallaJuegoController {
             Text numero = new Text(String.valueOf(i));
             hbox.getChildren().add(numero);
 
-            // Determinar si hay imagen o texto
+            // Imagen si corresponde
             String imgFile = switch (tipo) {
                 case "OSO"              -> "oso.png";
                 case "AGUJERO"          -> "agujero.png";
                 case "TRINEO"           -> "trineo.png";
                 case "INTERROGANTE"     -> "interrogante.png";
+                case "SUELO_QUEBRADIZO"  -> "suelo_quebradizo.png";
                 default                  -> null;
             };
 
@@ -108,10 +115,6 @@ public class pantallaJuegoController {
                 imgView.setFitWidth(30);
                 imgView.setFitHeight(30);
                 hbox.getChildren().add(imgView);
-            } else if ("SUELO_QUEBRADIZO".equals(tipo)) {
-                // Mostrar texto en lugar de imagen para suelo quebradizo
-                Text sueloTxt = new Text("(suelo quebradizo)");
-                hbox.getChildren().add(sueloTxt);
             }
 
             GridPane.setHalignment(hbox, HPos.CENTER);

@@ -55,11 +55,15 @@ public class pantallaJuegoController {
         P3.setImage(new Image(getClass().getResourceAsStream("/images/penguin_green.png")));
         P4.setImage(new Image(getClass().getResourceAsStream("/images/penguin_yellow.png")));
 
-        // Ajustar tamaño de imagen
-        P1.setFitWidth(30); P1.setFitHeight(30);
-        P2.setFitWidth(30); P2.setFitHeight(30);
-        P3.setFitWidth(30); P3.setFitHeight(30);
-        P4.setFitWidth(30); P4.setFitHeight(30);
+        // Ajustar tamaño de imagen (opcional)
+        P1.setFitWidth(30);
+        P1.setFitHeight(30);
+        P2.setFitWidth(30);
+        P2.setFitHeight(30);
+        P3.setFitWidth(30);
+        P3.setFitHeight(30);
+        P4.setFitWidth(30);
+        P4.setFitHeight(30);
 
         moverFicha(P1, 0);
         moverFicha(P2, 0);
@@ -87,6 +91,7 @@ public class pantallaJuegoController {
             Casilla casilla = gestorTablero.getTablero().getCasilla(i);
             String tipo = casilla.getTipo();
 
+            // Contenedor horizontal para número + imagen
             javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(5);
             hbox.setAlignment(javafx.geometry.Pos.CENTER);
 
@@ -94,13 +99,14 @@ public class pantallaJuegoController {
             Text numero = new Text(String.valueOf(i));
             hbox.getChildren().add(numero);
 
-            // Determinar si hay imagen o texto
+            // Imagen si corresponde
             String imgFile = switch (tipo) {
-                case "OSO"              -> "oso.png";
-                case "AGUJERO"          -> "agujero.png";
-                case "TRINEO"           -> "trineo.png";
-                case "INTERROGANTE"     -> "interrogante.png";
-                default                  -> null;
+                case "OSO"          -> "oso.png";
+                case "AGUJERO"      -> "agujero.png";
+                case "TRINEO"       -> "trineo.png";
+                case "INTERROGANTE" -> "interrogante.png";
+                case "SUELO_QUEBRADIZO" -> "suelo_quebradizo.png";
+                default             -> null;
             };
 
             if (imgFile != null) {
@@ -108,10 +114,6 @@ public class pantallaJuegoController {
                 imgView.setFitWidth(30);
                 imgView.setFitHeight(30);
                 hbox.getChildren().add(imgView);
-            } else if ("SUELO_QUEBRADIZO".equals(tipo)) {
-                // Mostrar texto en lugar de imagen para suelo quebradizo
-                Text sueloTxt = new Text("(suelo quebradizo)");
-                hbox.getChildren().add(sueloTxt);
             }
 
             GridPane.setHalignment(hbox, HPos.CENTER);
@@ -153,9 +155,9 @@ public class pantallaJuegoController {
 
     private void actualizarVista() {
         rapido_t.setText("Dado rápido: " + jugadorActual.getInventario().getDadosRapidos());
-        lento_t.setText("Dado lento:  " + jugadorActual.getInventario().getDadosLentos());
-        peces_t.setText("Peces:        " + jugadorActual.getInventario().getPeces());
-        nieve_t.setText("Bolas de nieve:"+ jugadorActual.getInventario().getBolasNieve());
+        lento_t.setText("Dado lento: "  + jugadorActual.getInventario().getDadosLentos());
+        peces_t.setText("Peces: "        + jugadorActual.getInventario().getPeces());
+        nieve_t.setText("Bolas de nieve: "+ jugadorActual.getInventario().getBolasNieve());
 
         rapido.setDisable(jugadorActual.getInventario().getDadosRapidos() == 0);
         lento.setDisable(jugadorActual.getInventario().getDadosLentos() == 0);
@@ -169,7 +171,7 @@ public class pantallaJuegoController {
     }
 
     /**
-     * Comprueba y aplica salto de turno si el jugador tiene turnos pendientes.
+     * Si el jugador actual tiene turnos perdidos, salta turno.
      */
     private boolean comprobarTurnoPerdido() {
         if (jugadorActual.tieneTurnoPerdido()) {
@@ -220,9 +222,9 @@ public class pantallaJuegoController {
                 break;
             case "SUELO_QUEBRADIZO":
                 int totalObjetos = jugadorActual.getInventario().getDadosRapidos()
-                                 + jugadorActual.getInventario().getDadosLentos()
-                                 + jugadorActual.getInventario().getPeces()
-                                 + jugadorActual.getInventario().getBolasNieve();
+                                  + jugadorActual.getInventario().getDadosLentos()
+                                  + jugadorActual.getInventario().getPeces()
+                                  + jugadorActual.getInventario().getBolasNieve();
 
                 if (totalObjetos > 5) {
                     jugadorActual.setPosicion(0);
@@ -232,8 +234,8 @@ public class pantallaJuegoController {
                     jugadorActual.perderTurnos(1);
                     String perdido = jugadorActual.getInventario().perderObjetoAleatorio();
                     eventos.setText(jugadorActual.getNombre()
-                        + " ha caído en Suelo Quebradizo con " + totalObjetos
-                        + " objetos y pierde un turno"
+                        + " ha caído en Suelo Quebradizo con "
+                        + totalObjetos + " objetos y pierde un turno"
                         + (perdido != null ? " y un " + perdido + "." : "."));
                 } else {
                     eventos.setText(jugadorActual.getNombre()

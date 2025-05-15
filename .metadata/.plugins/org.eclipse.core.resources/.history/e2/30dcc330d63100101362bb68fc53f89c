@@ -1,13 +1,8 @@
 package modelo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 public class Inventario {
     private int dadosRapidos, dadosLentos, peces, bolasNieve;
     private static final int MAX_DADOS = 3, MAX_PECES = 2, MAX_BOLAS = 6;
-    private static final Random rnd = new Random();
 
     public Inventario() { 
         this.dadosRapidos = 0; 
@@ -88,27 +83,4 @@ public class Inventario {
         return false; 
     }
     public int getBolasNieve() { return bolasNieve; }
-
-    /**
-     * Elige un objeto al azar entre los que tenga (>0) y lo quita.
-     * Devuelve el nombre del objeto perdido o null si no hay ninguno.
-     */
-    public String perderObjetoAleatorio() {
-        List<String> disponibles = new ArrayList<>();
-        if (dadosRapidos > 0)  disponibles.add("dado rápido");
-        if (dadosLentos > 0)   disponibles.add("dado lento");
-        if (peces > 0)         disponibles.add("pez");
-        if (bolasNieve > 0)    disponibles.add("bola de nieve");
-
-        if (disponibles.isEmpty()) return null;
-
-        String elegido = disponibles.get(rnd.nextInt(disponibles.size()));
-        switch (elegido) {
-            case "dado rápido"   -> { dadosRapidos--; break; }
-            case "dado lento"    -> { dadosLentos--;  break; }
-            case "pez"           -> { peces--;        break; }
-            case "bola de nieve" -> { bolasNieve--;   break; }
-        }
-        return elegido;
-    }
 }

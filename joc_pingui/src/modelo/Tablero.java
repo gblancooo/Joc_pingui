@@ -19,35 +19,59 @@ public class Tablero {
     private void generarCasillasAleatorias() {
         Random rnd = new Random();
 
-        // Inicialment totes NORMAL
+        // 1. Inicialmente todas NORMAL
         for (int i = 0; i < NUM_CASILLAS; i++) {
-            casillas.add(new Casilla(i, "NORMAL"));
+            casillas.add(new CasillaNormal(i));
         }
 
-        // Fixem límits per tipus especials
+        // 2. Límites para tipos especiales
         int numOsos = 5;
         int numAgujeros = 5;
         int numTrineos = 4;
         int numInterrogants = 6;
+        int numQuebradizos = 5;  // número de casillas Suelo Quebradizo
 
-        // Assignem tipus especials en posicions aleatòries
-        assignarTipusAleatori("OSO", numOsos, rnd);
-        assignarTipusAleatori("AGUJERO", numAgujeros, rnd);
-        assignarTipusAleatori("TRINEO", numTrineos, rnd);
-        assignarTipusAleatori("INTERROGANTE", numInterrogants, rnd);
+        // 3. Asignar tipos en posiciones aleatorias
+        assignarTipoAleatorio("OSO", numOsos, rnd);
+        assignarTipoAleatorio("AGUJERO", numAgujeros, rnd);
+        assignarTipoAleatorio("TRINEO", numTrineos, rnd);
+        assignarTipoAleatorio("INTERROGANTE", numInterrogants, rnd);
+        assignarTipoAleatorio("SUELO_QUEBRADIZO", numQuebradizos, rnd);
     }
 
-    private void assignarTipusAleatori(String tipus, int quantitat, Random rnd) {
-        int assignats = 0;
-        while (assignats < quantitat) {
+    private void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
+        int asignados = 0;
+        while (asignados < cantidad) {
             int pos = rnd.nextInt(NUM_CASILLAS);
 
-            // Evitem posició 0 (inici) i 49 (final), i evitem sobreescriure
+            // Evitar posición 0 (inicio) y última, y no sobreescribir no normales
+            if (pos == 0 || pos == NUM_CASILLAS - 1) continue;
             Casilla actual = casillas.get(pos);
-            if (pos != 0 && pos != NUM_CASILLAS - 1 && actual.getTipo().equals("NORMAL")) {
-                casillas.set(pos, new Casilla(pos, tipus));
-                assignats++;
+            if (!actual.getTipo().equals("NORMAL")) continue;
+
+            // Instanciar la casilla según su tipo
+            switch (tipo) {
+                case "OSO":
+                    casillas.set(pos, new Oso(pos));
+                    break;
+                case "AGUJERO":
+                    casillas.set(pos, new Agujero(pos));
+                    break;
+                case "TRINEO":
+                    casillas.set(pos, new Trineo(pos));
+                    break;
+                case "INTERROGANTE":
+                    casillas.set(pos, new Interrogant(pos));
+                    break;
+                case "SUELO_QUEBRADIZO":
+                    casillas.set(pos, new SueloQuebradizo(pos));
+                    break;
+                default:
+                    // mantener normal si no coincide
+                    casillas.set(pos, new CasillaNormal(pos));
             }
+
+            asignados++;
         }
     }
 
@@ -58,6 +82,6 @@ public class Tablero {
     }
 
     public List<Casilla> getCasillas() {
-        return casillas;
+        return Collections.unmodifiableList(casillas);
     }
 }
