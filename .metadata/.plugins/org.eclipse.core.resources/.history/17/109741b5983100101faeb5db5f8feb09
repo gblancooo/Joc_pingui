@@ -1,0 +1,10 @@
+package modelo;
+public class Inventario {
+    private int rap=0,len=0,peces=0,nieve=0;
+    public boolean usarPez(){ if(peces>0){peces--;return true;}return false; }
+    public void addPez(){ if(peces<2) peces++; }
+    public void addNieve(int k){ nieve=Math.min(6,nieve+k); }
+    public void addDadoRapido(){ rap=Math.min(3,rap+1); }
+    public void addDadoLento(){ len=Math.min(3,len+1); }
+    /* getters… */
+}

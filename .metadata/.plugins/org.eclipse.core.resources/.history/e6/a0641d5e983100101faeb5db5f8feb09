@@ -1,0 +1,89 @@
+// src/controlador/gestorPartidas.java
+package controlador;
+
+import modelo.Jugador;
+import modelo.Casilla;
+
+import java.util.List;
+
+/**
+ * Controla el flujo de la partida y la persistencia.
+ */
+public class gestorPartidas {
+    private final gestorTablero tablero;
+    private final List<Jugador> jugadores;
+    private int turnoActual = 0;
+
+    public gestorPartidas(gestorTablero tablero, List<Jugador> jugadores) {
+        this.tablero   = tablero;
+        this.jugadores = jugadores;
+    }
+
+    public gestorTablero getTablero() {
+        return tablero;
+    }
+
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public int getTurnoActual() {
+        return turnoActual;
+    }
+
+    /**
+     * Un turno: tirar dado, mover (sin contar casilla actual),
+     * activar efecto y rotar turno.
+     */
+    public void jugarTurno() {
+        Jugador j = jugadores.get(turnoActual);
+        int pasos = tirarDado();
+        avanzarJugador(j, pasos);
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        // guardar estado en BBDD...
+    }
+
+    /** Dado normal 1–6. */
+    public int tirarDado() {
+        return (int)(Math.random() * 6) + 1;
+    }
+
+    /**
+     * Mueve al jugador j 'pasos' casillas hacia delante SIN contar
+     * la posición actual. Actualiza casillas y dispara efectos.
+     */
+    public void avanzarJugador(Jugador j, int pasos) {
+        int idxActual = j.getPosicion();              // 0..49
+        int idxDestino = idxActual + pasos;           // nuevo índice
+        int max = tablero.getCasillas().size() - 1;   // 49
+
+        if (idxDestino > max) idxDestino = max;
+
+        // 1) Sacar de la actual
+        tablero.getCasillas().get(idxActual).quitarJugador(j);
+
+        // 2) Actualizar en Jugador
+        j.setPosicion(idxDestino);
+
+        // 3) Meter en destino
+        Casilla dest = tablero.getCasillas().get(idxDestino);
+        dest.añadirJugador(j);
+
+        // 4) Efecto
+        dest.realizarAccion(j, this);
+    }
+
+    // — Inventario turno actual —
+    public int getRapidos() {
+        return jugadores.get(turnoActual).getInventario().getDadosRapidos();
+    }
+    public int getLentos() {
+        return jugadores.get(turnoActual).getInventario().getDadosLentos();
+    }
+    public int getPeces() {
+        return jugadores.get(turnoActual).getInventario().getPeces();
+    }
+    public int getNieve() {
+        return jugadores.get(turnoActual).getInventario().getBolasDeNieve();
+    }
+}

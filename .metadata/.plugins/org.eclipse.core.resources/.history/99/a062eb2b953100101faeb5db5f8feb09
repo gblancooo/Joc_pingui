@@ -1,0 +1,36 @@
+package modelo;
+
+import java.util.ArrayList;
+import controlador.gestorPartidas;
+
+/**
+ * Clase base para todas las casillas.
+ * Mantiene posición e historial de jugadores que han caído aquí.
+ */
+public abstract class Casilla {
+    private final int posicion;
+    private final ArrayList<Jugador> jugadoresActuales;
+
+    public Casilla(int posicion, ArrayList<Jugador> jugadoresActuales) {
+        this.posicion = posicion;
+        this.jugadoresActuales = jugadoresActuales;
+    }
+
+    /** Para que las subclases implementen su efecto sobre el jugador. */
+    public abstract void realizarAccion(Jugador j, gestorPartidas gp);
+
+    /** Añade el jugador a la lista (no estrictamente necesario). */
+    public void añadirJugador(Jugador j) {
+        jugadoresActuales.add(j);
+    }
+
+    /** Quita el jugador de la lista. */
+    public void quitarJugador(Jugador j) {
+        jugadoresActuales.remove(j);
+    }
+
+    /** Permite a casillas tipo Trineo saber su índice. */
+    public int getPosicion() {
+        return posicion;
+    }
+}

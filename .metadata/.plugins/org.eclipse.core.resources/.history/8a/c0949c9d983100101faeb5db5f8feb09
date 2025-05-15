@@ -1,0 +1,30 @@
+package controlador;
+import modelo.*;
+import java.util.*;
+
+public class gestorTablero {
+  private final List<Casilla> cas = new ArrayList<>(50);
+  public gestorTablero(){
+    Random r=new Random();
+    for(int i=0;i<50;i++){
+      switch(r.nextInt(5)){
+        case 0: cas.add(new Oso(i)); break;
+        case 1: cas.add(new Agujero(i)); break;
+        case 2: cas.add(new Trineo(i)); break;
+        case 3: cas.add(new Interrogant(i)); break;
+        default: cas.add(new CasillaNormal(i)); break;
+      }
+    }
+    cas.set(0,new CasillaNormal(0));
+    cas.set(49,new CasillaNormal(49));
+  }
+  public List<Casilla> getCas() { return cas; }
+  public int siguienteIndiceDe(Class<? extends Casilla> cls,int idx){
+    for(int i=idx+1;i<cas.size();i++) if(cls.isInstance(cas.get(i))) return i;
+    return idx;
+  }
+  public int buscarAnteriorAgujero(int idx){
+    for(int i=idx-1;i>=0;i--) if(cas.get(i) instanceof Agujero) return i;
+    return 0;
+  }
+}

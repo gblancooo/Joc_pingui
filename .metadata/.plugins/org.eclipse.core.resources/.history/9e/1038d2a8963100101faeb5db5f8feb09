@@ -1,0 +1,108 @@
+package controlador;
+
+import modelo.Jugador;
+import modelo.Casilla;
+import java.util.List;
+
+/**
+ * Controla el flujo de la partida y la persistencia.
+ * Usa posiciones 0..N-1 internamente.
+ */
+public class gestorPartidas {
+    private static gestorTablero tablero;
+    private final List<Jugador> jugadores;
+    private int turnoActual;
+
+    // Campos para BBDD / encriptación (opcional)
+    private String urlBBDD;
+    private String username;
+    private String password;
+
+    public gestorPartidas(gestorTablero tablero, List<Jugador> jugadores) {
+        gestorPartidas.tablero = tablero;
+        this.jugadores         = jugadores;
+        this.turnoActual       = 0;
+    }
+
+    /** Devuelve el tablero en juego */
+    public static gestorTablero getTablero() {
+        return tablero;
+    }
+
+    /** Lista de jugadores */
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    /** Índice del jugador al que le toca */
+    public int getTurnoActual() {
+        return turnoActual;
+    }
+
+    /**
+     * Ejecuta un turno completo:
+     * - tira dado,
+     * - mueve sin contar la casilla actual,
+     * - dispara el efecto de la casilla destino,
+     * - avanza el turno.
+     */
+    public void jugarTurno() {
+        Jugador j = jugadores.get(turnoActual);
+        int pasos = tirarDado();
+        avanzarJugador(j, pasos);
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        // Aquí podrías serializar el estado en la BBDD encriptada
+    }
+
+    /** Dado normal de 1 a 6 (amplía luego con rápidos/lentos) */
+    public int tirarDado() {
+        return (int)(Math.random() * 6) + 1;
+    }
+
+    /**
+     * Mueve al jugador 'j' 'pasos' casillas hacia adelante (sin contar la actual),
+     * actualiza las listas de casillas y dispara el efecto de la nueva casilla.
+     */
+    public void avanzarJugador(Jugador j, int pasos) {
+        int actual   = j.getPosicion();                        // índice actual (0..49)
+        int destino  = actual + pasos;                         // índice destino
+        int maxIndex = tablero.getCasillas().size() - 1;       // 49 si hay 50 casillas
+
+        // No superar el final del tablero
+        if (destino > maxIndex) {
+            destino = maxIndex;
+        }
+
+        // 1) Quitar al jugador de la casilla actual
+        tablero.getCasillas().get(actual).quitarJugador(j);
+
+        // 2) Actualizar la posición interna del jugador
+        j.setPosicion(destino);
+
+        // 3) Añadir al jugador en la casilla destino
+        Casilla casillaDestino = tablero.getCasillas().get(destino);
+        casillaDestino.añadirJugador(j);
+
+        // 4) Disparar el efecto de la casilla
+        casillaDestino.realizarAccion(j, this);
+    }
+
+    // -----------------------------
+    // Getters de inventario del turno actual
+    // -----------------------------
+    public int getRapidos() {
+        return jugadores.get(turnoActual).getInventario().getDadosRapidos();
+    }
+
+    public int getLentos() {
+        return jugadores.get(turnoActual).getInventario().getDadosLentos();
+    }
+
+    public int getPeces() {
+        return jugadores.get(turnoActual).getInventario().getPeces();
+    }
+
+    public int getNieve() {
+        return jugadores.get(turnoActual).getInventario().getBolasDeNieve();
+    }
+}

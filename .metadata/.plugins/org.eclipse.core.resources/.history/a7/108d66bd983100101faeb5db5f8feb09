@@ -1,0 +1,11 @@
+package modelo;
+public class Jugador {
+    private String nombre, color;
+    private int pos = 0;
+    private Inventario inv = new Inventario();
+    public Jugador(String n, String c){ nombre=n;color=c; }
+    public int getPos(){ return pos; }
+    public void setPos(int p){ this.pos=p; }
+    public Inventario getInventario(){ return inv; }
+    /* getters nombre/color… */
+}

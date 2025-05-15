@@ -1,0 +1,84 @@
+package controlador;
+
+import modelo.Jugador;
+import modelo.Casilla;
+import java.util.List;
+
+/**
+ * Controla el flujo de la partida y la persistencia.
+ */
+public class gestorPartidas {
+    private static gestorTablero tablero;
+    private List<Jugador> jugadores;
+    private int turnoActual;
+
+    // Campos de conexión / encriptación (si los usas)
+    private String urlBBDD;
+    private String username;
+    private String password;
+
+    public gestorPartidas(gestorTablero tablero, List<Jugador> jugadores) {
+        this.tablero     = tablero;
+        this.jugadores   = jugadores;
+        this.turnoActual = 0;
+    }
+
+    public static gestorTablero getTablero() {
+        return tablero;
+    }
+
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public int getTurnoActual() {
+        return turnoActual;
+    }
+
+    /**
+     * Lanza un turno completo: tirar dado, mover y activar casilla.
+     */
+    public void jugarTurno() {
+        Jugador j = jugadores.get(turnoActual);
+        int pasos = tirarDado();
+        j.moverPosicion(pasos);
+
+        Casilla cas = tablero.getCasillas().get(j.getPosicion());
+        cas.realizarAccion(j, this);
+
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        // Aquí podrías serializar el estado en la BBDD encriptada
+    }
+
+    /**
+     * Tira el dado (este método puedes extenderlo para
+     * usar dados rápidos/lentos según el inventario).
+     */
+    public int tirarDado() {
+        return (int)(Math.random() * 6) + 1;
+    }
+
+    // ----------------------------------------------------
+    // Getters de inventario para el jugador actual
+    // ----------------------------------------------------
+
+    /** Cantidad de dados rápidos del jugador cuyo turno es actual */
+    public int getRapidos() {
+        return jugadores.get(turnoActual).getInventario().getDadosRapidos();
+    }
+
+    /** Cantidad de dados lentos del jugador cuyo turno es actual */
+    public int getLentos() {
+        return jugadores.get(turnoActual).getInventario().getDadosLentos();
+    }
+
+    /** Cantidad de peces del jugador cuyo turno es actual */
+    public int getPeces() {
+        return jugadores.get(turnoActual).getInventario().getPeces();
+    }
+
+    /** Cantidad de bolas de nieve del jugador cuyo turno es actual */
+    public int getNieve() {
+        return jugadores.get(turnoActual).getInventario().getBolasDeNieve();
+    }
+}

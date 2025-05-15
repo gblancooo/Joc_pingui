@@ -1,0 +1,13 @@
+package modelo;
+import controlador.gestorPartidas;
+import java.util.*;
+
+public abstract class Casilla {
+    protected final int idx;
+    protected List<Jugador> ocupantes;
+    public Casilla(int idx) { this.idx = idx; this.ocupantes = new ArrayList<>(); }
+    public int getIdx() { return idx; }
+    public void entrar(Jugador j)  { ocupantes.add(j); }
+    public void salir(Jugador j)   { ocupantes.remove(j); }
+    public abstract void accion(Jugador j, gestorPartidas gp);
+}

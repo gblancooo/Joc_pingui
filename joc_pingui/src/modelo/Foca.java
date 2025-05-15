@@ -1,30 +1,12 @@
 package modelo;
 
-public class Foca extends Jugador {
-	private boolean soborno;
-	
-	public Foca(int posicion, String nombre, String color, boolean soborno) {
-		super(posicion, nombre, color);
-		this.soborno = soborno;
-	}
-
-	public boolean isSoborno() {
-		return soborno;
-	}
-
-	public void setSoborno(boolean soborno) {
-		this.soborno = soborno;
-	}
-	
-	public void aplastarJugador(Pinguino p) {
-		
-	}
-	
-	public void golpearJugador(Pinguino p) {
-		
-	}
-
-	public void esSobornado() {
-		
-	}
+/** Si en tu juego hay focas; por defecto sin efecto */
+public class Foca extends Casilla {
+    public Foca(int idx, java.util.List<Jugador> occ) {
+        super(idx, occ);
+    }
+    @Override
+    public void realizarAccion(Jugador j, controlador.gestorPartidas gp) {
+        // Podrías robar un pez al jugador, etc.
+    }
 }

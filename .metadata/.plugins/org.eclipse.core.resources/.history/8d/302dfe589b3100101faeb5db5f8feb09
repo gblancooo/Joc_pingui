@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="vista.PantallaPrincipalController" prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <Button fx:id="btnIniciar" layoutX="250.0" layoutY="180.0" mnemonicParsing="false" onAction="#handleIniciar" text="Iniciar Juego" />
+    </children>
+</AnchorPane>

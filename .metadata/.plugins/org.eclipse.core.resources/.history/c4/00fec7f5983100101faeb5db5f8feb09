@@ -1,0 +1,16 @@
+package modelo;
+import controlador.gestorPartidas;
+
+public class SueloQuebradizo extends Casilla {
+    public SueloQuebradizo(int idx, java.util.List<Jugador> occ) {
+        super(idx, occ);
+    }
+
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        int anterior = idx - 1 < 0 ? 0 : idx - 1;
+        gp.getTablero().getCasillas().get(getPosicion()).quitarJugador(j);
+        j.setPosicion(anterior);
+        gp.getTablero().getCasillas().get(anterior).añadirJugador(j);
+    }
+}

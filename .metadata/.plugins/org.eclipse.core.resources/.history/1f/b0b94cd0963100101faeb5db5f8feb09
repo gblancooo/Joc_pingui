@@ -1,0 +1,52 @@
+// src/controlador/gestorTablero.java
+package controlador;
+
+import modelo.Casilla;
+import modelo.CasillaNormal;
+import modelo.Agujero;
+import modelo.Trineo;
+import modelo.Oso;
+import modelo.Interrogant;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Genera y mantiene un tablero de 50 casillas de tipos aleatorios.
+ */
+public class gestorTablero {
+    private final List<Casilla> casillas;
+
+    public gestorTablero() {
+        this.casillas = new ArrayList<>(50);
+        Random rand = new Random();
+
+        // Crear 50 casillas aleatorias
+        for (int i = 0; i < 50; i++) {
+            int t = rand.nextInt(5);
+            switch (t) {
+                case 0: casillas.add(new Oso(i));         break;
+                case 1: casillas.add(new Agujero(i));     break;
+                case 2: casillas.add(new Trineo(i));      break;
+                case 3: casillas.add(new Interrogant(i)); break;
+                default: casillas.add(new CasillaNormal(i)); break;
+            }
+        }
+        // Forzar inicio y fin como normales
+        casillas.set(0, new CasillaNormal(0));
+        casillas.set(49, new CasillaNormal(49));
+    }
+
+    public List<Casilla> getCasillas() {
+        return casillas;
+    }
+
+    /** Devuelve índice de la siguiente casilla de clase cls tras la posición idx. */
+    public int siguienteIndiceDe(Class<? extends Casilla> cls, int idx) {
+        for (int i = idx + 1; i < casillas.size(); i++) {
+            if (cls.isInstance(casillas.get(i))) return i;
+        }
+        return idx;
+    }
+}

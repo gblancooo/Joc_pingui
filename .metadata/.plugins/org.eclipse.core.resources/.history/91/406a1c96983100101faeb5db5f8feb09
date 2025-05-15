@@ -1,0 +1,31 @@
+package controlador;
+import modelo.*;
+import java.util.*;
+
+public class gestorPartidas {
+  private static gestorTablero tablero;
+  private List<Jugador> jugadores;
+  private int turno=0;
+  public gestorPartidas(List<Jugador> js){
+    jugadores=js;
+    tablero   = new gestorTablero();
+    // añadir jugadores a casilla 0:
+    for(Jugador j:js) tablero.getCas().get(0).entrar(j);
+  }
+  public static gestorTablero getTablero(){return tablero;}
+  public void jugarTurno(){
+    Jugador j=jugadores.get(turno);
+    int pasos = (int)(Math.random()*6)+1;
+    mover(j,pasos);
+    turno=(turno+1)%jugadores.size();
+  }
+  private void mover(Jugador j, int pasos){
+    int actual=j.getPos(), dest=actual+pasos;
+    if(dest>49) dest=49;
+    tablero.getCas().get(actual).salir(j);
+    j.setPos(dest);
+    Casilla c=tablero.getCas().get(dest);
+    c.entrar(j);
+    c.accion(j,this);
+  }
+}

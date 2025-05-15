@@ -1,0 +1,37 @@
+// src/modelo/Casilla.java
+package modelo;
+
+import controlador.gestorPartidas;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Clase base de todas las casillas.
+ */
+public abstract class Casilla {
+    private final int posicion;
+    private final List<Jugador> jugadoresActuales = new ArrayList<>();
+
+    public Casilla(int posicion) {
+        this.posicion = posicion;
+    }
+
+    /** Efecto de la casilla. */
+    public abstract void realizarAccion(Jugador j, gestorPartidas gp);
+
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public List<Jugador> getJugadoresActuales() {
+        return jugadoresActuales;
+    }
+
+    public void añadirJugador(Jugador j) {
+        jugadoresActuales.add(j);
+    }
+
+    public void quitarJugador(Jugador j) {
+        jugadoresActuales.remove(j);
+    }
+}

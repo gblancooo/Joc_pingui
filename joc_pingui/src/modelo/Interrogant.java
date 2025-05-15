@@ -1,28 +1,20 @@
 package modelo;
-
-import java.util.ArrayList;
-import java.util.Random;
 import controlador.gestorPartidas;
+import java.util.Random;
 
-/**
- * Casilla “?” que genera un evento aleatorio:
- * pez, bolas de nieve, dado rápido o dado lento.
- */
 public class Interrogant extends Casilla {
-
-    public Interrogant(int posicion, ArrayList<Jugador> jugadoresActuales) {
-        super(posicion, jugadoresActuales);
+    private static Random r = new Random();
+    public Interrogant(int idx, java.util.List<Jugador> occ) {
+        super(idx, occ);
     }
-
     @Override
     public void realizarAccion(Jugador j, gestorPartidas gp) {
-        Inventario inv = j.getInventario();
-        Random r = new Random();
-        switch (r.nextInt(4)) {
-            case 0: inv.agregarPez(); break;
-            case 1: inv.agregarBolasDeNieve(r.nextInt(3) + 1); break;
-            case 2: inv.agregarDadoRapido(); break;
-            default: inv.agregarDadoLento(); break;
+        int e = r.nextInt(4);
+        switch(e){
+            case 0: j.getInventario().addPez(); break;
+            case 1: j.getInventario().addNieve(r.nextInt(3)+1); break;
+            case 2: j.getInventario().addDadoRapido(); break;
+            case 3: j.getInventario().addDadoLento(); break;
         }
     }
 }

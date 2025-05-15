@@ -1,0 +1,87 @@
+package modelo;
+
+import controlador.gestorPartidas;
+
+/**
+ * Representa a un jugador en el juego.
+ */
+public class Jugador {
+    private String nombre;
+    private String color;
+    private int posicion;        // Índice 0-based de la casilla actual
+    private Inventario inventario;
+
+    /**
+     * Crea un jugador nuevo en la posición inicial (casilla 0).
+     */
+    public Jugador(String nombre, String color) {
+        this.nombre = nombre;
+        this.color  = color;
+        this.posicion = 0;
+        this.inventario = new Inventario();
+        // Añadimos al jugador a la casilla inicial
+        gestorPartidas.getTablero()
+                       .getCasillas()
+                       .get(this.posicion)
+                       .añadirJugador(this);
+    }
+
+    // —————————————
+    // Getters y setters
+    // —————————————
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    /**
+     * Devuelve la posición actual (índice 0-based).
+     */
+    public int getPosicion() {
+        return posicion;
+    }
+
+    /**
+     * Actualiza la posición lógica del jugador.
+     * No mueve la ficha: solo cambia el campo interno.
+     */
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
+    }
+
+    /**
+     * Acceso al inventario (dados, peces, bolas de nieve).
+     */
+    public Inventario getInventario() {
+        return inventario;
+    }
+
+    public void setInventario(Inventario inventario) {
+        this.inventario = inventario;
+    }
+
+    // —————————————
+    // Métodos de conveniencia
+    // —————————————
+
+    /**
+     * Si en algún punto querías moverlo directamente desde Jugador,
+     * podrías delegar a gestorPartidas así:
+     *
+     * gestorPartidas.getInstancia().avanzarJugador(this, pasos);
+     *
+     * Pero ahora la lógica de movimiento está completamente en gestorPartidas.
+     */
+}

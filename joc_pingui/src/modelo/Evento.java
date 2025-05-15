@@ -1,38 +1,21 @@
 package modelo;
-
-import java.util.ArrayList;
+import controlador.gestorPartidas;
 import java.util.Random;
 
-public abstract class Evento extends Casilla {
-	private String[] eventos = { "pez", "bolas", "rapido", "lento", "pierdeTurno", "pierdeItem", "motos" };
+public class Evento extends Casilla {
+    private static Random r = new Random();
+    public Evento(int idx, java.util.List<Jugador> occ) {
+        super(idx, occ);
+    }
 
-	public Evento(int posicion, ArrayList<Jugador> jugadoresActuales, String tipoEvento) {
-		super(posicion, jugadoresActuales);
-	}
-
-	public void realizarAccion() {
-		for (Jugador j : getJugadoresActuales()) {
-			if (j instanceof Pinguino) {
-				Random ran = new Random();
-				int pos = ran.nextInt(6);
-
-				if (eventos[pos].equals("pez")) {
-
-				} else if (eventos[pos].equals("bolas")) {
-
-				} else if (eventos[pos].equals("rapido")) {
-
-				} else if (eventos[pos].equals("lento")) {
-
-				} else if (eventos[pos].equals("pierdeTurno")) {
-
-				} else if (eventos[pos].equals("pierdeItem")) {
-
-				} else if (eventos[pos].equals("motos")) {
-
-				}
-			}
-		}
-	}
-
+    @Override
+    public void realizarAccion(Jugador j, gestorPartidas gp) {
+        int e = r.nextInt(4);
+        switch (e) {
+            case 0: j.getInventario().addPez(); break;
+            case 1: j.getInventario().addNieve(r.nextInt(3) + 1); break;
+            case 2: j.getInventario().addDadoRapido(); break;
+            case 3: j.getInventario().addDadoLento(); break;
+        }
+    }
 }

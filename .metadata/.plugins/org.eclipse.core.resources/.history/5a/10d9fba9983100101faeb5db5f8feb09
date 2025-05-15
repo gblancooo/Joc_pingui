@@ -1,0 +1,60 @@
+// CasillaNormal.java
+package modelo;
+import controlador.gestorPartidas;
+public class CasillaNormal extends Casilla {
+    public CasillaNormal(int i){ super(i); }
+    @Override public void accion(Jugador j, gestorPartidas gp) { /* sin efecto */ }
+}
+
+// Agujero.java
+package modelo;
+import controlador.gestorPartidas;
+public class Agujero extends Casilla {
+    public Agujero(int i){ super(i); }
+    @Override public void accion(Jugador j, gestorPartidas gp) {
+        j.setPos(gp.getTablero().buscarAnteriorAgujero(idx));
+    }
+}
+
+// Oso.java
+package modelo;
+import controlador.gestorPartidas;
+public class Oso extends Casilla {
+    public Oso(int i){ super(i); }
+    @Override public void accion(Jugador j, gestorPartidas gp) {
+        if (j.getInventario().usarPez()) {
+           /* salva con pez */ 
+        } else {
+           j.setPos(0);
+        }
+    }
+}
+
+// Trineo.java
+package modelo;
+import controlador.gestorPartidas;
+public class Trineo extends Casilla {
+    public Trineo(int i){ super(i); }
+    @Override public void accion(Jugador j, gestorPartidas gp) {
+        int nxt = gp.getTablero().siguienteIndiceDe(Trineo.class, idx);
+        j.setPos(nxt);
+    }
+}
+
+// Interrogant.java
+package modelo;
+import controlador.gestorPartidas;
+import java.util.Random;
+public class Interrogant extends Casilla {
+    private static Random r = new Random();
+    public Interrogant(int i){ super(i); }
+    @Override public void accion(Jugador j, gestorPartidas gp) {
+        int e = r.nextInt(4);
+        switch(e){
+            case 0: j.getInventario().addPez(); break;
+            case 1: j.getInventario().addNieve(r.nextInt(3)+1); break;
+            case 2: j.getInventario().addDadoRapido(); break;
+            case 3: j.getInventario().addDadoLento(); break;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+package controlador;
+
+import modelo.Casilla;
+import modelo.CasillaNormal;
+import modelo.Agujero;
+import modelo.Trineo;
+import modelo.Oso;
+import modelo.Interrogant;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+/**
+ * Genera y mantiene un tablero de 50 casillas de tipos aleatorios.
+ */
+public class gestorTablero {
+    private final List<Casilla> casillas;
+
+    public gestorTablero() {
+        this.casillas = new ArrayList<>(50);
+        Random rand = new Random();
+
+        // Crear 50 casillas aleatorias
+        for (int i = 0; i < 50; i++) {
+            int t = rand.nextInt(5);
+            switch (t) {
+                case 0:
+                    casillas.add(new Oso(i, new ArrayList<>()));         // constructor Oso(int, List<Jugador>)
+                    break;
+                case 1:
+                    casillas.add(new Agujero(i, new ArrayList<>()));     // constructor Agujero(int, List<Jugador>)
+                    break;
+                case 2:
+                    casillas.add(new Trineo(i, new ArrayList<>()));      // constructor Trineo(int, List<Jugador>)
+                    break;
+                case 3:
+                    casillas.add(new Interrogant(i, new ArrayList<>())); // constructor Interrogant(int, List<Jugador>)
+                    break;
+                default:
+                    casillas.add(new CasillaNormal(i, new ArrayList<>())); // constructor CasillaNormal(int, List<Jugador>)
+                    break;
+            }
+        }
+
+        // Forzar la casilla 0 y la 49 como normales
+        casillas.set(0, new CasillaNormal(0, new ArrayList<>()));
+        casillas.set(49, new CasillaNormal(49, new ArrayList<>()));
+    }
+
+    /** Devuelve la lista completa de casillas */
+    public List<Casilla> getCasillas() {
+        return casillas;
+    }
+
+    /**
+     * Busca la siguiente casilla del tipo cls, partiendo de idx+1.
+     * Si no hay más, devuelve idx.
+     */
+    public int siguienteIndiceDe(Class<? extends Casilla> cls, int idx) {
+        for (int i = idx + 1; i < casillas.size(); i++) {
+            if (cls.isInstance(casillas.get(i))) {
+                return i;
+            }
+        }
+        return idx;
+    }
+}

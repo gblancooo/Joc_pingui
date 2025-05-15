@@ -1,75 +1,27 @@
 package vista;
 
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TextField;
+import modelo.Jugador;
 import controlador.gestorPartidas;
 import controlador.gestorTablero;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.stage.Stage;
-import modelo.Inventario;
-import modelo.Jugador;
-import modelo.Pinguino;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class pantallaSeleccionJugadoresController {
+    @FXML private TextField nombre1, color1, nombre2, color2;
 
-    @FXML private Spinner<Integer> spinnerNumJugadores;
+    @FXML public void onJugar() throws Exception {
+        List<Jugador> js = new ArrayList<>();
+        js.add(new Jugador(nombre1.getText(), color1.getText()));
+        js.add(new Jugador(nombre2.getText(), color2.getText()));
+        gestorTablero gt = new gestorTablero();
+        new gestorPartidas(gt, js);
 
-    @FXML
-    public void initialize() {
-        // Rango 1–4, valor inicial 1
-        spinnerNumJugadores.setValueFactory(
-            new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 4, 1)
-        );
-    }
-
-    @FXML
-    private void handleEjecutar() {
-        int num = spinnerNumJugadores.getValue();
-
-        try {
-            // 1) Crear dinámicamente la lista de jugadores
-            List<Jugador> jugadores = new ArrayList<>();
-            String[] colores = {"Azul", "Rojo", "Verde", "Amarillo"};
-            for (int i = 0; i < num; i++) {
-                jugadores.add(new Pinguino(
-                    0,
-                    "Jugador " + (i + 1),
-                    colores[i],
-                    new Inventario(new ArrayList<>())
-                ));
-            }
-
-            // 2) Inicializar el tablero y la partida
-            gestorTablero gTab = new gestorTablero();
-            gestorPartidas gp = new gestorPartidas(gTab, jugadores);
-
-            // 3) Cargar la vista de juego
-            FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/pantallaJuego.fxml")
-            );
-            Parent root = loader.load();
-
-            // 4) Llamar a initGame en lugar de los métodos que daban error
-            vista.pantallaJuegoController ctrl = loader.getController();
-            ctrl.initGame(num, gp);
-
-            // 5) Mostrar ventana de juego
-            Stage stage = new Stage();
-            stage.setTitle("Pantalla de Juego");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-            // 6) Cerrar ventana de selección
-            spinnerNumJugadores.getScene().getWindow().hide();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("pantallaJuego.fxml"));
+        Stage stage = (Stage) nombre1.getScene().getWindow();
+        stage.setScene(new Scene(loader.load()));
     }
 }
