@@ -206,11 +206,8 @@ public class pantallaJuegoController {
     private void procesarMovimiento(int pasos) {
         jugadorActual.mover(pasos);
         Casilla cas = gestorTablero.getTablero().getCasilla(jugadorActual.getPosicion());
-        String tipo = cas.getTipo();
-
-        switch (tipo) {
+        switch (cas.getTipo()) {
             case "OSO":
-                reproducirSonidoEvento();
                 if (jugadorActual.getInventario().getPeces() >= 2) {
                     jugadorActual.getInventario().usarPeces(2);
                     eventos.setText(jugadorActual.getNombre() + " ha pagado 2 peces para sobornar al oso y evitar retroceder.");
@@ -219,9 +216,7 @@ public class pantallaJuegoController {
                     eventos.setText(jugadorActual.getNombre() + " ha caído en OSO y retrocede a inicio.");
                 }
                 break;
-
             case "AGUJERO":
-                reproducirSonidoEvento();
                 int pos = jugadorActual.getPosicion();
                 for (int i = pos - 1; i >= 0; i--) {
                     if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("AGUJERO")) {
@@ -231,9 +226,7 @@ public class pantallaJuegoController {
                 }
                 eventos.setText(jugadorActual.getNombre() + " ha caído en AGUJERO y retrocede.");
                 break;
-
             case "TRINEO":
-                reproducirSonidoEvento();
                 pos = jugadorActual.getPosicion();
                 for (int i = pos + 1; i < Tablero.NUM_CASILLAS; i++) {
                     if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("TRINEO")) {
@@ -243,15 +236,11 @@ public class pantallaJuegoController {
                 }
                 eventos.setText(jugadorActual.getNombre() + " ha usado TRINEO y avanza.");
                 break;
-
             case "INTERROGANTE":
-                reproducirSonidoEvento();
                 String msg = Evento.activarEvento(jugadorActual);
                 eventos.setText(msg);
                 break;
-
             case "SUELO_QUEBRADIZO":
-                reproducirSonidoEvento();
                 int totalObjetos = jugadorActual.getInventario().getDadosRapidos()
                                  + jugadorActual.getInventario().getDadosLentos()
                                  + jugadorActual.getInventario().getPeces()
@@ -273,11 +262,8 @@ public class pantallaJuegoController {
                         + " ha pasado por Suelo Quebradizo sin objetos: sin penalización.");
                 }
                 break;
-
             default:
-                // Casilla normal: no suena el evento
                 eventos.setText("");
-                break;
         }
 
         dadoResultText.setText("Ha salido: " + pasos);

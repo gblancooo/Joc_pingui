@@ -1,5 +1,4 @@
 INDEX VERSION 1.134+F:\DAM\El joc del pingüí\Programacio\Joc_pingui\.metadata\.plugins\org.eclipse.jdt.core
-3095530466.index
 3863276042.index
 2009097987.index
 2760129655.index
