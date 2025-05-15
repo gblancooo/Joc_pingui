@@ -1,7 +1,6 @@
 package vista;
 
 import controlador.gestorTablero;
-import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -11,7 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import modelo.Casilla;
 import modelo.Evento;
 import modelo.Jugador;
@@ -43,10 +41,13 @@ public class pantallaJuegoController {
     private gestorTablero gestorTablero;
     private Random rnd = new Random();
 
+    // Nueva variable para controlar cuántas bolas de nieve ha usado el jugador actual en el turno o partida
     private int bolasNieveUsadas = 0;
 
     public void initialize() {
         gestorTablero = new gestorTablero();
+
+        // Situa las fichas en la posición inicial (0)
         moverFicha(P1, 0);
         moverFicha(P2, 0);
         moverFicha(P3, 0);
@@ -57,7 +58,7 @@ public class pantallaJuegoController {
         this.jugadores = jugadores;
         this.turnoActual = 0;
         this.jugadorActual = jugadores.get(0);
-        this.bolasNieveUsadas = 0;
+        this.bolasNieveUsadas = 0; // Reiniciar conteo al inicio
         dibujarTablero();
         actualizarVista();
     }
@@ -86,36 +87,16 @@ public class pantallaJuegoController {
             tablero.add(txt, col, row);
         }
 
+        // Añadimos las fichas al tablero
         tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 
-    private void moverFicha(Circle ficha, int destino) {
+    private void moverFicha(Circle ficha, int posicion) {
         int cols = 5;
-
-        Integer currentRow = GridPane.getRowIndex(ficha);
-        Integer currentCol = GridPane.getColumnIndex(ficha);
-
-        if (currentRow == null) currentRow = 0;
-        if (currentCol == null) currentCol = 0;
-
-        int targetRow = destino / cols;
-        int targetCol = destino % cols;
-
-        GridPane.setRowIndex(ficha, targetRow);
-        GridPane.setColumnIndex(ficha, targetCol);
-
-        double deltaX = (targetCol - currentCol) * 100.0;
-        double deltaY = (targetRow - currentRow) * 30.0;
-
-        TranslateTransition transition = new TranslateTransition(Duration.millis(300), ficha);
-        transition.setByX(deltaX);
-        transition.setByY(deltaY);
-        transition.setOnFinished(e -> {
-            ficha.setTranslateX(0);
-            ficha.setTranslateY(0);
-        });
-
-        transition.play();
+        int row = posicion / cols;
+        int col = posicion % cols;
+        GridPane.setRowIndex(ficha, row);
+        GridPane.setColumnIndex(ficha, col);
     }
 
     private void actualizarVista() {
@@ -176,19 +157,19 @@ public class pantallaJuegoController {
         }
 
         dadoResultText.setText("Ha salido: " + pasos);
-        actualizarVista();
+        actualizarVista(); // <- Actualizamos vista después de mover
     }
 
     private void siguienteTurno() {
         turnoActual = (turnoActual + 1) % jugadores.size();
         jugadorActual = jugadores.get(turnoActual);
-        bolasNieveUsadas = 0;
+        bolasNieveUsadas = 0; // Reinicio contador bolas al cambiar de jugador (si quieres que sea por partida, quita esta línea)
         actualizarVista();
     }
 
-    @FXML private void handleNewGame(ActionEvent e)  { }
-    @FXML private void handleSaveGame(ActionEvent e) { }
-    @FXML private void handleLoadGame(ActionEvent e) { }
+    @FXML private void handleNewGame(ActionEvent e)  { /* ... */ }
+    @FXML private void handleSaveGame(ActionEvent e) { /* ... */ }
+    @FXML private void handleLoadGame(ActionEvent e) { /* ... */ }
     @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
 
     @FXML
@@ -201,7 +182,7 @@ public class pantallaJuegoController {
     @FXML
     private void handleRapido(ActionEvent e) {
         if (jugadorActual.getInventario().usarDadoRapido()) {
-            int tirada = 5 + rnd.nextInt(6);
+            int tirada = 5 + rnd.nextInt(6);  // 5 a 10
             procesarMovimiento(tirada);
             siguienteTurno();
         }
@@ -210,7 +191,7 @@ public class pantallaJuegoController {
     @FXML
     private void handleLento(ActionEvent e) {
         if (jugadorActual.getInventario().usarDadoLento()) {
-            int tirada = 1 + rnd.nextInt(3);
+            int tirada = 1 + rnd.nextInt(3);  // 1 a 3
             procesarMovimiento(tirada);
             siguienteTurno();
         }
@@ -228,16 +209,19 @@ public class pantallaJuegoController {
 
     @FXML
     private void handleNieve(ActionEvent e) {
+        // Control máximo 6 bolas usadas por jugador
         if (bolasNieveUsadas >= 6) {
             eventos.setText("Has usado el máximo de 6 bolas de nieve.");
             return;
         }
 
         if (jugadorActual.getInventario().usarBola()) {
+            // Creamos lista con los jugadores disponibles para elegir menos el jugadorActual
             List<Jugador> posiblesVictimas = jugadores.stream()
                 .filter(j -> j != jugadorActual)
                 .toList();
 
+            // Convertimos nombres para mostrar en dialogo
             List<String> nombresVictimas = posiblesVictimas.stream()
                 .map(Jugador::getNombre)
                 .toList();

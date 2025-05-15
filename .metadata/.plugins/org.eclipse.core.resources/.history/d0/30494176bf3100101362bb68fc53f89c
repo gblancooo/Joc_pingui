@@ -51,7 +51,9 @@ public class pantallaSeleccionJugadoresController {
 
         // Si se ha usado el combo para seleccionar número
         if (seleccion != null && seleccion >= 1 && seleccion <= 4) {
-            
+            // Limpiar jugadores anteriores
+            gj.resetJugadores();
+
             // Colores fijos para 4 jugadores
             String[] colores = { "#0000FF", "#FF0000", "#00FF00", "#FFFF00" };
 
