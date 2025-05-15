@@ -1,0 +1,27 @@
+package modelo;
+
+public class SueloQuebradizo extends Casilla {
+
+    public SueloQuebradizo(int posicion) {
+        super(posicion, "SUELO_QUEBRADIZO");
+    }
+
+    /**
+     * Aplica el efecto especial de esta casilla según el inventario del jugador.
+     * @param jugador Jugador que cae en la casilla.
+     * @return mensaje con la consecuencia del efecto.
+     */
+    public String aplicarEfecto(Jugador jugador) {
+        int objetos = jugador.getInventario().totalObjetos();
+
+        if (objetos > 5) {
+            jugador.setPosicion(0);
+            return jugador.getNombre() + " tiene más de 5 objetos y cae en suelo quebradizo, vuelve al inicio.";
+        } else if (objetos > 0) {
+            jugador.setPierdeTurno(true);
+            return jugador.getNombre() + " tiene hasta 5 objetos y pierde un turno en suelo quebradizo.";
+        } else {
+            return jugador.getNombre() + " no tiene objetos y pasa suelo quebradizo sin penalización.";
+        }
+    }
+}
