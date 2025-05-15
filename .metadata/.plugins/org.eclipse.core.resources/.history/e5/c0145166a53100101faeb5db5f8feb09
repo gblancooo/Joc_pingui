@@ -9,15 +9,7 @@ public class Casilla {
         this.tipo = tipo;
     }
 
-    public int getPosicion() {
-        return posicion;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+    public int getPosicion() { return posicion; }
+    public String getTipo()    { return tipo;    }
+    public void setTipo(String tipo) { this.tipo = tipo; }
 }

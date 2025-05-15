@@ -4,15 +4,18 @@ import controlador.gestorTablero;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import modelo.Casilla;
 import modelo.Evento;
 import modelo.Jugador;
-import modelo.Tablero;
+import modelo.Tablero;  // <— importa Tablero
 
 import java.util.List;
 import java.util.Random;
@@ -41,12 +44,6 @@ public class pantallaJuegoController {
 
     public void initialize() {
         gestorTablero = new gestorTablero();
-
-        // Situa les fitxes a la posició inicial (0)
-        moverFicha(P1, 0);
-        moverFicha(P2, 0);
-        moverFicha(P3, 0);
-        moverFicha(P4, 0);
     }
 
     public void setJugadores(List<Jugador> jugadores) {
@@ -67,9 +64,6 @@ public class pantallaJuegoController {
             GridPane.setHalignment(txt, HPos.CENTER);
             tablero.add(txt, col, row);
         }
-
-        // Afegim fitxes al tauler
-        tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 
     private void moverFicha(Circle ficha, int posicion) {
@@ -134,9 +128,7 @@ public class pantallaJuegoController {
             default:
                 eventos.setText("");
         }
-
         dadoResultText.setText("Ha salido: " + pasos);
-        actualizarVista(); // <- Actualitzem vista després de moure
     }
 
     private void siguienteTurno() {
