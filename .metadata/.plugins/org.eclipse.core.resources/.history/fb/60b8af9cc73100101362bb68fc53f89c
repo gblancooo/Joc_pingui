@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="vista.pantallaSeleccionJugadoresController"
+      alignment="CENTER"
+      spacing="20.0"
+      prefWidth="400" prefHeight="300">
+
+  <children>
+    <ComboBox fx:id="comboJugadores"
+              promptText="Número de jugadores (1-4)"
+              prefWidth="200" />
+
+    <Button fx:id="btnStart"
+            text="Comenzar partida"
+            onAction="#onStart" />
+  </children>
+</VBox>

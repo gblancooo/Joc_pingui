@@ -1,0 +1,97 @@
+package vista;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.stage.Stage;
+
+import java.util.List;
+import java.util.Optional;
+
+import javafx.event.ActionEvent;
+
+public class pantallaPrincipalController {
+
+    @FXML private MenuItem newGame;
+    @FXML private MenuItem saveGame;
+    @FXML private MenuItem loadGame;
+    @FXML private MenuItem quitGame;
+
+    @FXML private TextField userField;
+    @FXML private PasswordField passField;
+    @FXML private Button loginButton;
+    @FXML private Button registerButton;
+
+    @FXML
+    private void handleNewGame(ActionEvent event) { /* ... */ }
+
+    @FXML
+    private void handleSaveGame(ActionEvent event) { /* ... */ }
+
+    @FXML
+    private void handleLoadGame(ActionEvent event) { /* ... */ }
+
+    @FXML
+    private void handleQuitGame(ActionEvent event) {
+        System.exit(0);
+    }
+
+    /** Ara sí: al fer Login carreguem la següent FXML */
+   
+    @FXML
+    private void handleLogin(ActionEvent event) {
+        String user = userField.getText();
+        String pass = passField.getText();
+
+        // Aquí podrías validar usuario y pass antes de continuar...
+
+        // Mostrar diálogo para elegir Nueva o Cargar partida
+        List<String> choices = List.of("Nueva Partida", "Cargar Partida");
+
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("Nueva Partida", choices);
+        dialog.setTitle("Seleccionar opción");
+        dialog.setHeaderText("¿Quieres comenzar una nueva partida o cargar una existente?");
+        dialog.setContentText("Elige una opción:");
+
+        Optional<String> result = dialog.showAndWait();
+
+        if (result.isPresent()) {
+            String opcion = result.get();
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+
+            try {
+                if ("Nueva Partida".equals(opcion)) {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaSeleccionJugadores.fxml"));
+                    Scene escena = new Scene(loader.load());
+                    stage.setScene(escena);
+                } else if ("Cargar Partida".equals(opcion)) {
+                    // Por ahora no hace nada, pero puedes poner un mensaje o dejarlo aquí
+                    System.out.println("Funcionalidad Cargar Partida aún no implementada.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /** I si vols que el registre també porti a una altra pantalla: */
+    @FXML
+    private void handleRegister(ActionEvent event) {
+        try {
+            // per exemple, tornar al mateix FXML de registre o una vista d’alta
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaRegistro.fxml"));
+            Scene escena = new Scene(loader.load());
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            stage.setScene(escena);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

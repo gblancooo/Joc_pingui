@@ -160,12 +160,11 @@ public class pantallaJuegoController {
         Casilla cas = gestorTablero.getTablero().getCasilla(jugadorActual.getPosicion());
         switch (cas.getTipo()) {
             case "OSO":
-                if (jugadorActual.getInventario().getPeces() >= 2) {
-                    jugadorActual.getInventario().usarPeces(2); // Descontar 2 peces
-                    eventos.setText(jugadorActual.getNombre() + " ha pagado 2 peces para sobornar al oso y evitar retroceder.");
-                } else {
+                if (!jugadorActual.getInventario().usarPez()) {
                     jugadorActual.setPosicion(0);
-                    eventos.setText(jugadorActual.getNombre() + " ha caído en OSO y retrocede a inicio.");
+                    eventos.setText(jugadorActual.getNombre() + " ha caído en OSO y retrocede a inicio");
+                } else {
+                    eventos.setText(jugadorActual.getNombre() + " ha usado un pez para sobornar al oso y evitar retroceder");
                 }
                 break;
             case "AGUJERO":
@@ -176,7 +175,7 @@ public class pantallaJuegoController {
                         break;
                     }
                 }
-                eventos.setText(jugadorActual.getNombre() + " ha caído en AGUJERO y retrocede.");
+                eventos.setText(jugadorActual.getNombre() + " ha caído en AGUJERO y retrocede");
                 break;
             case "TRINEO":
                 pos = jugadorActual.getPosicion();
@@ -186,7 +185,7 @@ public class pantallaJuegoController {
                         break;
                     }
                 }
-                eventos.setText(jugadorActual.getNombre() + " ha usado TRINEO y avanza.");
+                eventos.setText(jugadorActual.getNombre() + " ha usado TRINEO y avanza");
                 break;
             case "INTERROGANTE":
                 String msg = Evento.activarEvento(jugadorActual);
@@ -199,7 +198,6 @@ public class pantallaJuegoController {
         dadoResultText.setText("Ha salido: " + pasos);
         actualizarVista();
     }
-
 
     private void siguienteTurno() {
         turnoActual = (turnoActual + 1) % jugadores.size();

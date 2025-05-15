@@ -66,15 +66,6 @@ public class Inventario {
         } 
         return false; 
     }
-    
-    public boolean usarPeces(int cantidad) {
-        if (peces >= cantidad) {
-            peces -= cantidad;
-            return true;
-        }
-        return false;
-    }
-    
     public boolean usarBola() { 
         if (bolasNieve > 0) { 
             bolasNieve--; 
