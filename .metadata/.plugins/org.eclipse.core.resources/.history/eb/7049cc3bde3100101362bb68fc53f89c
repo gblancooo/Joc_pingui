@@ -282,10 +282,7 @@ public class pantallaJuegoController {
 
         dadoResultText.setText("Ha salido: " + pasos);
         actualizarVista();
-        chequearChoque();      
     }
-
-    
 
     private void siguienteTurno() {
         turnoActual = (turnoActual + 1) % jugadores.size();
@@ -382,48 +379,6 @@ public class pantallaJuegoController {
             }
         } else {
             eventos.setText("No tienes bolas de nieve para lanzar.");
-        }
-    }
-    
-    private void chequearChoque() {
-        for (Jugador otro : jugadores) {
-            if (otro != jugadorActual && otro.getPosicion() == jugadorActual.getPosicion()) {
-                int bolasA = jugadorActual.getInventario().getBolasNieve();
-                int bolasB = otro.getInventario().getBolasNieve();
-
-                // Vaciar bolas de ambos
-                while (jugadorActual.getInventario().getBolasNieve() > 0)
-                    jugadorActual.getInventario().usarBola();
-                while (otro.getInventario().getBolasNieve() > 0)
-                    otro.getInventario().usarBola();
-
-                if (bolasA > bolasB) {
-                    int diff = bolasA - bolasB;
-                    eventos.setText(jugadorActual.getNombre()
-                        + " gana la guerra (" + bolasA + " vs " + bolasB + ") y avanza " + diff + " casillas.");
-                    jugadorActual.mover(diff);
-                    // animar ficha ganadora
-                    int idx = jugadores.indexOf(jugadorActual);
-                    ImageView f = (idx == 0? P1 : idx==1? P2 : idx==2? P3 : P4);
-                    moverFicha(f, jugadorActual.getPosicion());
-                }
-                else if (bolasB > bolasA) {
-                    int diff = bolasB - bolasA;
-                    eventos.setText(otro.getNombre()
-                        + " gana la guerra (" + bolasB + " vs " + bolasA + ") y avanza " + diff + " casillas.");
-                    otro.mover(diff);
-                    int idx = jugadores.indexOf(otro);
-                    ImageView f = (idx == 0? P1 : idx==1? P2 : idx==2? P3 : P4);
-                    moverFicha(f, otro.getPosicion());
-                }
-                else {
-                    eventos.setText("Empat en la guerra (" + bolasA + " vs " + bolasB + "). Ambdós a 0.");
-                }
-
-                // tras resolver un choque, sólo habrá uno por turno
-                actualizarVista();
-                break;
-            }
         }
     }
 }

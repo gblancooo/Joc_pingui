@@ -282,10 +282,7 @@ public class pantallaJuegoController {
 
         dadoResultText.setText("Ha salido: " + pasos);
         actualizarVista();
-        chequearChoque();      
     }
-
-    
 
     private void siguienteTurno() {
         turnoActual = (turnoActual + 1) % jugadores.size();
