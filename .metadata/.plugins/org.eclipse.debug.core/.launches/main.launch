@@ -13,6 +13,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_CLASSPATH_ONLY_JAR" value="false"/>
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="controlador.main"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="joc_pingui"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--module-path &quot;C:\javafx-sdk-21\lib&quot; --add-modules javafx.controls,javafx.fxml"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="joc_pingui"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="--module-path &quot;F:\DAM\El joc del pingüí\Programacio\javafx-sdk-21.0.7\lib&quot; --add-modules javafx.controls,javafx.fxml"/>
 </launchConfiguration>
