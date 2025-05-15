@@ -37,16 +37,16 @@ public class pantallaPrincipalController {
         System.exit(0);
     }
 
-   
+    /** Ara sí: al fer Login carreguem la següent FXML */
     @FXML
     private void handleLogin(ActionEvent event) {
         String user = userField.getText();
         String pass = passField.getText();
 
-        // Aquí podrías validar usuario y contraseña
+        // (Opcional) valida usuari/pass aquí abans de continuar...
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaSeleccionModo.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pantallaSeleccionJugadores.fxml"));
             Scene escena = new Scene(loader.load());
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             stage.setScene(escena);
@@ -54,7 +54,6 @@ public class pantallaPrincipalController {
             e.printStackTrace();
         }
     }
-
 
     /** I si vols que el registre també porti a una altra pantalla: */
     @FXML
