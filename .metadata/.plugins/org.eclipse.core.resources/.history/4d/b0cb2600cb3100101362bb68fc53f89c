@@ -92,35 +92,20 @@ public class pantallaJuegoController {
             Casilla casilla = gestorTablero.getTablero().getCasilla(i);
             String tipo = casilla.getTipo();
 
-            // Contenedor horizontal para número + imagen
-            javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(5); // Espacio entre elementos
-            hbox.setAlignment(javafx.geometry.Pos.CENTER);
-
-            // Número de casilla
-            Text numero = new Text(String.valueOf(i));
-            hbox.getChildren().add(numero);
-
-            // Imagen si corresponde
-            String imgFile = switch (tipo) {
-                case "OSO"          -> "oso.png";
-                case "AGUJERO"      -> "agujero.png";
-                case "TRINEO"       -> "trineo.png";
-                case "INTERROGANTE" -> "interrogante.png";
-                default             -> null;
+            String texto = switch (tipo) {
+                case "OSO"          -> i + " (oso)";
+                case "AGUJERO"      -> i + " (agujero)";
+                case "TRINEO"       -> i + " (trineo)";
+                case "INTERROGANTE" -> i + " (interrogante)";
+                default             -> String.valueOf(i);
             };
 
-            if (imgFile != null) {
-                ImageView imgView = new ImageView(new Image(getClass().getResourceAsStream("/images/" + imgFile)));
-                imgView.setFitWidth(30);
-                imgView.setFitHeight(30);
-                hbox.getChildren().add(imgView);
-            }
-
-            GridPane.setHalignment(hbox, HPos.CENTER);
-            tablero.add(hbox, col, row);
+            Text txt = new Text(texto);
+            GridPane.setHalignment(txt, HPos.CENTER);
+            tablero.add(txt, col, row);
         }
 
-        // Añadir los pingüinos (fichas)
+        // Añadimos las imágenes de pingüinos en lugar de los círculos
         tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 

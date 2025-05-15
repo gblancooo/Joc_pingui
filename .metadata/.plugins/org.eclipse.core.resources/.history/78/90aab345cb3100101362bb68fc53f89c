@@ -92,35 +92,30 @@ public class pantallaJuegoController {
             Casilla casilla = gestorTablero.getTablero().getCasilla(i);
             String tipo = casilla.getTipo();
 
-            // Contenedor horizontal para número + imagen
-            javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(5); // Espacio entre elementos
-            hbox.setAlignment(javafx.geometry.Pos.CENTER);
+            ImageView imgView = new ImageView();
+            imgView.setFitWidth(30);
+            imgView.setFitHeight(30);
 
-            // Número de casilla
-            Text numero = new Text(String.valueOf(i));
-            hbox.getChildren().add(numero);
-
-            // Imagen si corresponde
             String imgFile = switch (tipo) {
-                case "OSO"          -> "oso.png";
-                case "AGUJERO"      -> "agujero.png";
-                case "TRINEO"       -> "trineo.png";
-                case "INTERROGANTE" -> "interrogante.png";
+                case "OSO"          -> i + "oso.png";
+                case "AGUJERO"      -> i + "agujero.png";
+                case "TRINEO"       -> i + "trineo.png";
+                case "INTERROGANTE" -> i + "interrogante.png";
                 default             -> null;
             };
 
             if (imgFile != null) {
-                ImageView imgView = new ImageView(new Image(getClass().getResourceAsStream("/images/" + imgFile)));
-                imgView.setFitWidth(30);
-                imgView.setFitHeight(30);
-                hbox.getChildren().add(imgView);
+                imgView.setImage(new Image(getClass().getResourceAsStream("/images/" + imgFile)));
+                GridPane.setHalignment(imgView, HPos.CENTER);
+                tablero.add(imgView, col, row);
+            } else {
+                Text txt = new Text(String.valueOf(i));
+                GridPane.setHalignment(txt, HPos.CENTER);
+                tablero.add(txt, col, row);
             }
-
-            GridPane.setHalignment(hbox, HPos.CENTER);
-            tablero.add(hbox, col, row);
         }
 
-        // Añadir los pingüinos (fichas)
+        // Añadimos las imágenes de pingüinos en lugar de los círculos
         tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 
