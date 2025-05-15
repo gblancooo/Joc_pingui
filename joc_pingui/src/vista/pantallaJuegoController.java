@@ -60,17 +60,31 @@ public class pantallaJuegoController {
     private void dibujarTablero() {
         tablero.getChildren().clear();
         int cols = 5;
+
         for (int i = 0; i < Tablero.NUM_CASILLAS; i++) {
             int row = i / cols;
             int col = i % cols;
-            Text txt = new Text(String.valueOf(i));
+
+            Casilla casilla = gestorTablero.getTablero().getCasilla(i);
+            String tipo = casilla.getTipo();
+
+            String texto = switch (tipo) {
+                case "OSO"          -> i + " (oso)";
+                case "AGUJERO"      -> i + " (agujero)";
+                case "TRINEO"       -> i + " (trineo)";
+                case "INTERROGANTE" -> i + " (interrogante)";
+                default             -> String.valueOf(i);
+            };
+
+            Text txt = new Text(texto);
             GridPane.setHalignment(txt, HPos.CENTER);
             tablero.add(txt, col, row);
         }
 
-        // Afegim fitxes al tauler
+        // Añadimos las fichas al tablero
         tablero.getChildren().addAll(P1, P2, P3, P4);
     }
+
 
     private void moverFicha(Circle ficha, int posicion) {
         int cols = 5;
