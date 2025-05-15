@@ -13,8 +13,7 @@ public class Evento {
                 if (inv.addPez()) return jugador.getNombre() + " ha obtenido un pez!";
                 break;
             case 1:
-                int n = 1 + rnd.nextInt(3);
-                int añadidas = 0;
+                int n = 1 + rnd.nextInt(3), añadidas = 0;
                 for (int i = 0; i < n; i++) if (inv.addBola()) añadidas++;
                 return jugador.getNombre() + " ha obtenido " + añadidas + " bolas de nieve!";
             case 2:
