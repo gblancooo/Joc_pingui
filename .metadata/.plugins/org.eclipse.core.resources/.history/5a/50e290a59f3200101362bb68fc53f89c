@@ -442,7 +442,7 @@ public class pantallaJuegoController {
         try (Statement st = conexion.createStatement();
             
         	
-        	 //ResultSet rsJugadors = st.executeQuery(sql1);
+        	 ResultSet rsJugadors = st.executeQuery(sql1);
         	 ResultSet rsTablero = st.executeQuery(sql2);
         //	 ResultSet rsPartida = st.executeQuery(sql3);
         	     	
@@ -498,12 +498,10 @@ public class pantallaJuegoController {
                 
 			}
             */
-            
-            ResultSet rsJugadors = st.executeQuery(sql1);
             while (rsJugadors.next()) {
                 count++;
             }
-          
+            
             ResultSet rsJugadors1 = st.executeQuery(sql1); // reobro el recordset
             
             while (rsJugadors1.next()) 

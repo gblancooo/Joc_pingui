@@ -118,12 +118,5 @@ public class Inventario {
         peces /= 2;
         bolasNieve /= 2;
     }
-    
-    public void vaciar() {
-        dadosRapidos = 0;
-        dadosLentos = 0;
-        peces = 0;
-        bolasNieve = 0;
-    }
 
 }

@@ -442,19 +442,18 @@ public class pantallaJuegoController {
         try (Statement st = conexion.createStatement();
             
         	
-        	 //ResultSet rsJugadors = st.executeQuery(sql1);
+       // 	 ResultSet rsJugadors = st.executeQuery(sql1);
         	 ResultSet rsTablero = st.executeQuery(sql2);
-        //	 ResultSet rsPartida = st.executeQuery(sql3);
+       // 	 ResultSet rsPartida = st.executeQuery(sql3);
         	     	
         	) {
 
-        	// ACTUALITZEM TABLERO
             while (rsTablero.next()) {
                 int pos = rsTablero.getInt("FILA");
             	
 				switch (rsTablero.getString("TIPO")) {
                 case "OSO":
-                Tablero.casillas.set(pos, new Oso(pos));
+                	Tablero.casillas.set(pos, new Oso(pos));
                     
                     break;
                 case "AGUJERO":
@@ -465,8 +464,7 @@ public class pantallaJuegoController {
                     break;
                 case "INTERROGANTE":
                 	Tablero.casillas.set(pos, new Interrogant(pos));
-                    
-                	break;
+                    break;
                 case "SUELO_QUEBRADIZO":
                 	Tablero.casillas.set(pos, new SueloQuebradizo(pos));
                     break;
@@ -476,75 +474,13 @@ public class pantallaJuegoController {
 				}
             	
             	
-			  
+            	
+            	
             	
            }
 
-        //ACTUALITZEM JUGADORS
-            
-            int count = 0;
-            int tot=0;
-            
-            
-            moverFicha(P1, 0);
-            moverFicha(P2, 0);
-            moverFicha(P3, 0);
-            moverFicha(P4, 0);
-            moverFicha(PFoca, 0);
-            
-           /* for (int i = 0; i < 4; i++) {
-
-                jugadores(i)count.getInventario().vaciar();
-                
-			}
-            */
-            
-            ResultSet rsJugadors = st.executeQuery(sql1);
-            while (rsJugadors.next()) {
-                count++;
-            }
-          
-            ResultSet rsJugadors1 = st.executeQuery(sql1); // reobro el recordset
-            
-            while (rsJugadors1.next()) 
-            {
-                tot++;
-            	int pos = rsJugadors1.getInt("POSICIO");
-                int numJugador=rsJugadors1.getInt("NUMJUGADOR");
-                int DadoRapido=rsJugadors1.getInt("DadoRapido");
-                int DadoLento=rsJugadors1.getInt("DadoLento");
-                int Peces=rsJugadors1.getInt("Peces");
-                int BolasNieve=rsJugadors1.getInt("BolasNieve");
-                if (tot<=count-1) // son jugadors 
-                {
-                	if (numJugador == 0) {
-                		moverFicha(P1, pos);
-                	}
-                	else if (numJugador == 1) {
-                		moverFicha(P2, pos);
-                	}
-                	else if (numJugador == 2) {
-                		moverFicha(P3, pos);
-                	}
-                	else if (numJugador ==3) {
-                		moverFicha(P4, pos);
-                	}
-     
-                }
-                else // es foca 
-                {
-                	
-                	moverFicha(PFoca, pos);
-                }
-                
-                }
-           
-                
-            
-            
-            
-            
-        //System.out.println("asdsad");
+        
+        System.out.println(asdsad);
         dibujarTablero();
         
         

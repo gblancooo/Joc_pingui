@@ -442,7 +442,7 @@ public class pantallaJuegoController {
         try (Statement st = conexion.createStatement();
             
         	
-        	 //ResultSet rsJugadors = st.executeQuery(sql1);
+        	 ResultSet rsJugadors = st.executeQuery(sql1);
         	 ResultSet rsTablero = st.executeQuery(sql2);
         //	 ResultSet rsPartida = st.executeQuery(sql3);
         	     	
@@ -498,35 +498,32 @@ public class pantallaJuegoController {
                 
 			}
             */
-            
-            ResultSet rsJugadors = st.executeQuery(sql1);
             while (rsJugadors.next()) {
                 count++;
             }
-          
-            ResultSet rsJugadors1 = st.executeQuery(sql1); // reobro el recordset
             
-            while (rsJugadors1.next()) 
+                        
+            while (rsJugadors.next()) 
             {
                 tot++;
-            	int pos = rsJugadors1.getInt("POSICIO");
-                int numJugador=rsJugadors1.getInt("NUMJUGADOR");
-                int DadoRapido=rsJugadors1.getInt("DadoRapido");
-                int DadoLento=rsJugadors1.getInt("DadoLento");
-                int Peces=rsJugadors1.getInt("Peces");
-                int BolasNieve=rsJugadors1.getInt("BolasNieve");
+            	int pos = rsJugadors.getInt("POSICIO");
+                int numJugador=rsJugadors.getInt("NUMJUGADOR");
+                int DadoRapido=rsJugadors.getInt("DadoRapido");
+                int DadoLento=rsJugadors.getInt("DadoLento");
+                int Peces=rsJugadors.getInt("Peces");
+                int BolasNieve=rsJugadors.getInt("BolasNieve");
                 if (tot<=count-1) // son jugadors 
                 {
-                	if (numJugador == 0) {
+                	if (numJugador = 0) {
                 		moverFicha(P1, pos);
                 	}
-                	else if (numJugador == 1) {
+                	else if (numJugador = 1) {
                 		moverFicha(P2, pos);
                 	}
-                	else if (numJugador == 2) {
+                	else if (numJugador = 2) {
                 		moverFicha(P3, pos);
                 	}
-                	else if (numJugador ==3) {
+                	else if (numJugador = 3) {
                 		moverFicha(P4, pos);
                 	}
      

@@ -442,7 +442,7 @@ public class pantallaJuegoController {
         try (Statement st = conexion.createStatement();
             
         	
-        	 //ResultSet rsJugadors = st.executeQuery(sql1);
+        	 ResultSet rsJugadors = st.executeQuery(sql1);
         	 ResultSet rsTablero = st.executeQuery(sql2);
         //	 ResultSet rsPartida = st.executeQuery(sql3);
         	     	

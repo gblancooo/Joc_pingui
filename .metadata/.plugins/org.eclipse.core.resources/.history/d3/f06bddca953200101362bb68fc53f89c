@@ -40,8 +40,7 @@ public class Tablero {
     }
 
     public void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
-        
-    	int asignados = 0;
+        int asignados = 0;
         while (asignados < cantidad) {
             int pos = rnd.nextInt(NUM_CASILLAS);
 

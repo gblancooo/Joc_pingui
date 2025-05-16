@@ -14,17 +14,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import modelo.Agujero;
 import modelo.Casilla;
-import modelo.CasillaNormal;
 import modelo.Evento;
 import modelo.Jugador;
-import modelo.Oso;
-import modelo.SueloQuebradizo;
 import modelo.Tablero;
-import modelo.Trineo;
 import modelo.Foca;
-import modelo.Interrogant;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -363,12 +357,13 @@ public class pantallaJuegoController {
     	
     	
     	//esborro totes les taules
-    	//bbdd.delete(conexion, "DELETE  FROM TBL_PARTIDA");l
-    	//bbdd.delete(conexion, "DELETE  FROM TABLERO");
-    	//bbdd.delete(conexion, "DELETE  FROM JUGADORS_PARTIDA");
+    	bbdd.delete(conexion, "DELETE  FROM TBL_PARTIDA");
+    	bbdd.delete(conexion, "DELETE  FROM TABLERO");
+    	bbdd.delete(conexion, "DELETE  FROM JUGADORS_PARTIDA");
     	
     	
-    	   	
+    	
+    	
     	//	crear partida per desar
     	int maxPartida;
     	
@@ -383,6 +378,8 @@ public class pantallaJuegoController {
                 id=id+1;
                 
                 Integer jug = jugadores.size();
+                /////////////////////////////////////////////////////////////////////////////////////////////////
+                		/////////////////////////////////////////////////////////////////////////////////////////
                 //Guardem nova partida i numero de jugadors
                 bbdd.insert(conexion, "INSERT INTO tbl_partida ( Id, NumJugadors) values ("+ id + ", "+ jug + ")");
                 
@@ -412,7 +409,12 @@ public class pantallaJuegoController {
                 	
                 	
 				}
+                
            
+                               
+                
+                //System.out.println("La id maxima es: " + id );
+
             }
 
         } catch (SQLException e1) {
@@ -427,137 +429,10 @@ public class pantallaJuegoController {
     	
     	//Connection conexion = null;
     	//conexion = bbdd.conectarBaseDatos();
+    	bbdd.insert(conexion, "INSERT INTO tbl_partida ( Id, NumJugadors) values (2, 1)"); 
     	
-    	///////////////////////////////////////////////////////////////////////////////
-    	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    	// Actualitzo el combobox i poso les partides guardades
-    	
-    	
-    	
-    	String sql1 = "SELECT * FROM JUGADORS_PARTIDA WHERE ID_PARTIDA=17";
-    	String sql2="SELECT * FROM TABLERO WHERE ID_PARTIDA=17 ORDER BY FILA";	
-    	String sql3= "SELECT * FROM TBL_PARTIDA WHERE ID_PARTIDA=17";
-        
-    	
-        try (Statement st = conexion.createStatement();
-            
-        	
-        	 //ResultSet rsJugadors = st.executeQuery(sql1);
-        	 ResultSet rsTablero = st.executeQuery(sql2);
-        //	 ResultSet rsPartida = st.executeQuery(sql3);
-        	     	
-        	) {
-
-        	// ACTUALITZEM TABLERO
-            while (rsTablero.next()) {
-                int pos = rsTablero.getInt("FILA");
-            	
-				switch (rsTablero.getString("TIPO")) {
-                case "OSO":
-                Tablero.casillas.set(pos, new Oso(pos));
-                    
-                    break;
-                case "AGUJERO":
-                	Tablero.casillas.set(pos, new Agujero(pos));
-                    break;
-                case "TRINEO":
-                	Tablero.casillas.set(pos, new Trineo(pos));
-                    break;
-                case "INTERROGANTE":
-                	Tablero.casillas.set(pos, new Interrogant(pos));
-                    
-                	break;
-                case "SUELO_QUEBRADIZO":
-                	Tablero.casillas.set(pos, new SueloQuebradizo(pos));
-                    break;
-                default:
-                    // mantener normal si no coincide
-                	Tablero.casillas.set(pos, new CasillaNormal(pos));
-				}
-            	
-            	
-			  
-            	
-           }
-
-        //ACTUALITZEM JUGADORS
-            
-            int count = 0;
-            int tot=0;
-            
-            
-            moverFicha(P1, 0);
-            moverFicha(P2, 0);
-            moverFicha(P3, 0);
-            moverFicha(P4, 0);
-            moverFicha(PFoca, 0);
-            
-           /* for (int i = 0; i < 4; i++) {
-
-                jugadores(i)count.getInventario().vaciar();
-                
-			}
-            */
-            
-            ResultSet rsJugadors = st.executeQuery(sql1);
-            while (rsJugadors.next()) {
-                count++;
-            }
-          
-            ResultSet rsJugadors1 = st.executeQuery(sql1); // reobro el recordset
-            
-            while (rsJugadors1.next()) 
-            {
-                tot++;
-            	int pos = rsJugadors1.getInt("POSICIO");
-                int numJugador=rsJugadors1.getInt("NUMJUGADOR");
-                int DadoRapido=rsJugadors1.getInt("DadoRapido");
-                int DadoLento=rsJugadors1.getInt("DadoLento");
-                int Peces=rsJugadors1.getInt("Peces");
-                int BolasNieve=rsJugadors1.getInt("BolasNieve");
-                if (tot<=count-1) // son jugadors 
-                {
-                	if (numJugador == 0) {
-                		moverFicha(P1, pos);
-                	}
-                	else if (numJugador == 1) {
-                		moverFicha(P2, pos);
-                	}
-                	else if (numJugador == 2) {
-                		moverFicha(P3, pos);
-                	}
-                	else if (numJugador ==3) {
-                		moverFicha(P4, pos);
-                	}
-     
-                }
-                else // es foca 
-                {
-                	
-                	moverFicha(PFoca, pos);
-                }
-                
-                }
-           
-                
-            
-            
-            
-            
-        //System.out.println("asdsad");
-        dibujarTablero();
-        
-        
-        } catch (SQLException e1) {
-            System.out.println("Error al ejecutar SELECT: " + e1);
-        }
     	
     }
-    
-    
-    
-    
-    
     
     @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
 
@@ -697,6 +572,4 @@ public class pantallaJuegoController {
             }
         }
     }
-    
-    
 }

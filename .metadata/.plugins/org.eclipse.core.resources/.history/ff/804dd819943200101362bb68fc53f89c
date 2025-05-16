@@ -39,9 +39,8 @@ public class Tablero {
         assignarTipoAleatorio("SUELO_QUEBRADIZO", numQuebradizos, rnd);
     }
 
-    public void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
-        
-    	int asignados = 0;
+    private void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
+        int asignados = 0;
         while (asignados < cantidad) {
             int pos = rnd.nextInt(NUM_CASILLAS);
 

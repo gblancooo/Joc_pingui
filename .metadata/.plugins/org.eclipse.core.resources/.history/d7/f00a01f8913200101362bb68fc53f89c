@@ -9,7 +9,7 @@ public class Tablero {
 
     public static final int NUM_CASILLAS = 50;
 
-   public static List<Casilla> casillas;
+   public List<Casilla> casillas;
 
     public Tablero() {
         casillas = new ArrayList<>();
@@ -39,9 +39,8 @@ public class Tablero {
         assignarTipoAleatorio("SUELO_QUEBRADIZO", numQuebradizos, rnd);
     }
 
-    public void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
-        
-    	int asignados = 0;
+    private void assignarTipoAleatorio(String tipo, int cantidad, Random rnd) {
+        int asignados = 0;
         while (asignados < cantidad) {
             int pos = rnd.nextInt(NUM_CASILLAS);
 
