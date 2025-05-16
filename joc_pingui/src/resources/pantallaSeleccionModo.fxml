@@ -6,17 +6,22 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vista.pantallaSeleccionModoController">
-    <padding>
-        <Insets bottom="50" left="50" right="50" top="50" />
-    </padding>
-   <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="QUE VOS FER?" textAlignment="CENTER">
-      <font>
-         <Font size="40.0" />
-      </font>
-   </Text>
+<VBox alignment="CENTER" spacing="20.0" prefHeight="400.0" prefWidth="600.0"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="vista.pantallaSeleccionModoController">
 
-          <Button fx:id="nuevaPartidaBtn" onAction="#handleNuevaPartida" prefHeight="81.0" prefWidth="177.0" text="Nueva Partida" />
-    <Button fx:id="cargarPartidaBtn" onAction="#handleCargarPartida" prefHeight="91.0" prefWidth="167.0" text="Cargar Partida" />
+    <padding>
+        <Insets top="50" right="50" bottom="50" left="50"/>
+    </padding>
+
+    <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="QUE VOS FER?" textAlignment="CENTER">
+        <font>
+            <Font size="40.0"/>
+        </font>
+    </Text>
+
+    <Button fx:id="nuevaPartidaBtn" text="Nueva partida" onAction="#handleNewGame" maxWidth="200" prefHeight="81.0" prefWidth="177.0"/>
+    <Button fx:id="cargarPartidaBtn" text="Cargar partida" onAction="#handleLoadGame" maxWidth="200" prefHeight="91.0" prefWidth="167.0"/>
 
 </VBox>

@@ -36,6 +36,12 @@
             <MenuItem fx:id="quitGame" mnemonicParsing="false" text="Quit"/>
           </items>
         </Menu>
+        <Menu text="Partida">
+          <items>
+            <MenuItem fx:id="saveGame" text="Guardar partida" onAction="#handleSaveGame"/>
+            <MenuItem text="Salir" onAction="#handleQuitGame"/>
+          </items>
+        </Menu>
       </menus>
     </MenuBar>
 
@@ -196,12 +202,10 @@
               </image>
             </ImageView>
 
-            <!-- Aquí la ficha de la foca IA -->
             <ImageView fx:id="PFoca"
                        fitWidth="30.0" fitHeight="30.0"
                        pickOnBounds="true" preserveRatio="true">
               <GridPane.margin>
-                <!-- ajusta offsets si quieres posicionar inicialmente -->
                 <Insets top="0" right="0" bottom="0" left="160"/>
               </GridPane.margin>
               <image>

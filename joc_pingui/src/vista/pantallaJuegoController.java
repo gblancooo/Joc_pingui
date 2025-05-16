@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,8 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -58,6 +57,8 @@ public class pantallaJuegoController {
 
     private int bolasNieveUsadas = 0;
 
+    
+    
     public void initialize() {
         gestorTablero = new gestorTablero();
 
@@ -339,8 +340,85 @@ public class pantallaJuegoController {
     }
 
     @FXML private void handleNewGame(ActionEvent e)  { }
-    @FXML private void handleSaveGame(ActionEvent e) { }
-    @FXML private void handleLoadGame(ActionEvent e) { }
+    
+    @FXML
+    private void handleSaveGame(ActionEvent e) {
+        // 1) Pedir al usuario el ID con el que guardará la partida
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Guardar partida");
+        dialog.setHeaderText("Introduce un ID para la nueva partida:");
+        dialog.setContentText("ID:");
+
+        Optional<String> resultado = dialog.showAndWait();
+        if (resultado.isEmpty()) {
+            eventos.setText("Guardado cancelado.");
+            return;
+        }
+
+        int id;
+        try {
+            id = Integer.parseInt(resultado.get());
+        } catch (NumberFormatException ex) {
+            eventos.setText("ID inválido. Debe ser un número entero.");
+            return;
+        }
+
+        // 2) Llamar a gestorPartidas.guardar(...)
+        controlador.gestorPartidas gp = new controlador.gestorPartidas();
+        // Obtenemos la lista actual de jugadores y el tablero
+        List<modelo.Jugador> lista = this.jugadores;
+        modelo.Tablero tab = this.gestorTablero.getTablero();
+
+        gp.guardar(id, lista, tab);
+
+        // 3) Feedback al usuario
+        eventos.setText("Partida guardada con ID = " + id);
+    }
+  
+    @FXML
+    private void handleLoadGame(ActionEvent e) {
+        // 1) Pedir al usuario el ID de la partida
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Cargar partida");
+        dialog.setHeaderText("Introduce el ID de la partida que quieras cargar:");
+        dialog.setContentText("ID:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()) return;
+
+        int id;
+        try {
+            id = Integer.parseInt(result.get());
+        } catch (NumberFormatException ex) {
+            eventos.setText("ID inválido.");
+            return;
+        }
+
+        // 2) Cargar con el gestor
+        controlador.gestorPartidas gp = new controlador.gestorPartidas();
+        vista.bbdd.Partida partidaCargada = gp.cargar(id);
+        if (partidaCargada == null) {
+            eventos.setText("No se encontró la partida con ID=" + id);
+            return;
+        }
+
+        // 3) Sustituir estado interno
+        //   a) Jugadores (incluye ya la Foca si estaba guardada)
+        Jugador[] arr = partidaCargada.getJugadores();
+        this.jugadores = new ArrayList<>(List.of(arr));
+
+        //   b) Turno actual: reiniciamos para que siguienteTurno() ponga a 0
+        this.turnoActual = -1;
+
+        //   c) Tablero: inyectamos el que cargamos en el gestor
+        this.gestorTablero = new gestorTablero(partidaCargada.getTablero());
+
+        // 4) Refrescar la UI
+        dibujarTablero();
+        siguienteTurno();
+        eventos.setText("Partida " + id + " cargada correctamente.");
+    }
+    
     @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
 
     @FXML
@@ -479,4 +557,9 @@ public class pantallaJuegoController {
             }
         }
     }
+
+    public void setGestorTablero(gestorTablero gt) {
+        this.gestorTablero = gt;
+    }
+
 }

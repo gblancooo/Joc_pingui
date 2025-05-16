@@ -1,0 +1,482 @@
+package vista;
+
+import controlador.gestorTablero;
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
+import modelo.Casilla;
+import modelo.Evento;
+import modelo.Jugador;
+import modelo.Tablero;
+import modelo.Foca;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
+
+public class pantallaJuegoController {
+
+    @FXML private MenuItem newGame;
+    @FXML private MenuItem saveGame;
+    @FXML private MenuItem loadGame;
+    @FXML private MenuItem quitGame;
+
+    @FXML private GridPane tablero;
+    @FXML private ImageView P1, P2, P3, P4, PFoca;
+
+    @FXML private Text dadoResultText;
+    @FXML private Button dado;
+    @FXML private Text rapido_t, lento_t, peces_t, nieve_t;
+    @FXML private Button rapido, lento, peces, nieve;
+    @FXML private Text eventos;
+
+    private MediaPlayer mediaPlayer;
+    
+    private List<Jugador> jugadores;
+    private Jugador jugadorActual;
+    private int turnoActual = 0;
+    private gestorTablero gestorTablero;
+    private Random rnd = new Random();
+
+    private int bolasNieveUsadas = 0;
+
+    public void initialize() {
+        gestorTablero = new gestorTablero();
+
+        // Cargar imágenes de pingüinos para cada jugador
+        P1.setImage(new Image(getClass().getResourceAsStream("/images/penguin_blue.png")));
+        P2.setImage(new Image(getClass().getResourceAsStream("/images/penguin_red.png")));
+        P3.setImage(new Image(getClass().getResourceAsStream("/images/penguin_green.png")));
+        P4.setImage(new Image(getClass().getResourceAsStream("/images/penguin_yellow.png")));
+        // Cargar imagen de la foca IA
+        PFoca.setImage(new Image(getClass().getResourceAsStream("/images/foca.png")));
+
+        // Ajustar tamaño de imagen
+        for (ImageView iv : List.of(P1, P2, P3, P4, PFoca)) {
+            iv.setFitWidth(30);
+            iv.setFitHeight(30);
+        }
+
+        // Posicionar inicialmente todas en la casilla 0
+        moverFicha(P1, 0);
+        moverFicha(P2, 0);
+        moverFicha(P3, 0);
+        moverFicha(P4, 0);
+        moverFicha(PFoca, 0);
+        
+        String ruta = getClass().getResource("/sounds/fondo.mp3").toExternalForm();
+        Media media = new Media(ruta);
+        mediaPlayer = new MediaPlayer(media);
+
+        // Reproducir la música en loop infinito
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
+    }
+
+    public void setJugadores(List<Jugador> humanos) {
+        // 1. Guardamos sólo a los humanos que llegan de la selección
+        this.jugadores = new ArrayList<>(humanos);
+        
+        // 2. Añadimos la Foca IA al final
+        Foca foca = new Foca("Foca IA", "gris");  // puedes poner el color que quieras
+        this.jugadores.add(foca);
+
+        // 3. Inicializamos el índice para que siguienteTurno() arranque en 0
+        this.turnoActual = -1;   
+
+        // 4. Dibujamos y lanzamos el primer turno (jugador 0)
+        dibujarTablero();
+        siguienteTurno();
+    }
+
+    private void dibujarTablero() {
+        tablero.getChildren().clear();
+        int cols = 5;
+
+        for (int i = 0; i < Tablero.NUM_CASILLAS; i++) {
+            int row = i / cols;
+            int col = i % cols;
+
+            Casilla casilla = gestorTablero.getTablero().getCasilla(i);
+            String tipo = casilla.getTipo();
+
+            javafx.scene.layout.HBox hbox = new javafx.scene.layout.HBox(5);
+            hbox.setAlignment(javafx.geometry.Pos.CENTER);
+
+            // Número de casilla
+            Text numero = new Text(String.valueOf(i));
+            hbox.getChildren().add(numero);
+
+            // Determinar si hay imagen o texto
+            String imgFile = switch (tipo) {
+                case "OSO"              -> "oso.png";
+                case "AGUJERO"          -> "agujero.png";
+                case "TRINEO"           -> "trineo.png";
+                case "INTERROGANTE"     -> "interrogante.png";
+                default                  -> null;
+            };
+
+            if (imgFile != null) {
+                ImageView imgView = new ImageView(new Image(getClass().getResourceAsStream("/images/" + imgFile)));
+                imgView.setFitWidth(30);
+                imgView.setFitHeight(30);
+                hbox.getChildren().add(imgView);
+            } else if ("SUELO_QUEBRADIZO".equals(tipo)) {
+                // Mostrar texto en lugar de imagen para suelo quebradizo
+                Text sueloTxt = new Text("(suelo quebradizo)");
+                hbox.getChildren().add(sueloTxt);
+            }
+
+            GridPane.setHalignment(hbox, HPos.CENTER);
+            tablero.add(hbox, col, row);
+        }
+
+        // Añadir las fichas (jugadores humanos y IA)
+        tablero.getChildren().addAll(P1, P2, P3, P4, PFoca);
+    }
+
+    private void moverFicha(ImageView ficha, int destino) {
+        int cols = 5;
+
+        Integer currentRow = GridPane.getRowIndex(ficha);
+        Integer currentCol = GridPane.getColumnIndex(ficha);
+
+        if (currentRow == null) currentRow = 0;
+        if (currentCol == null) currentCol = 0;
+
+        int targetRow = destino / cols;
+        int targetCol = destino % cols;
+
+        GridPane.setRowIndex(ficha, targetRow);
+        GridPane.setColumnIndex(ficha, targetCol);
+
+        double deltaX = (targetCol - currentCol) * 100.0;
+        double deltaY = (targetRow - currentRow) * 30.0;
+
+        TranslateTransition transition = new TranslateTransition(Duration.millis(1000), ficha);
+        transition.setByX(deltaX);
+        transition.setByY(deltaY);
+        transition.setOnFinished(e -> {
+            ficha.setTranslateX(0);
+            ficha.setTranslateY(0);
+        });
+        transition.play();
+    }
+
+    private void actualizarVista() {
+        rapido_t.setText("Dado rápido: " + jugadorActual.getInventario().getDadosRapidos());
+        lento_t.setText("Dado lento:  " + jugadorActual.getInventario().getDadosLentos());
+        peces_t.setText("Peces:        " + jugadorActual.getInventario().getPeces());
+        nieve_t.setText("Bolas de nieve:"+ jugadorActual.getInventario().getBolasNieve());
+
+        rapido.setDisable(jugadorActual.getInventario().getDadosRapidos() == 0);
+        lento.setDisable(jugadorActual.getInventario().getDadosLentos() == 0);
+        peces.setDisable(jugadorActual.getInventario().getPeces() == 0);
+        nieve.setDisable(jugadorActual.getInventario().getBolasNieve() == 0);
+
+        // Mover cada ficha según la posición en la lista de jugadores
+        for (int i = 0; i < jugadores.size(); i++) {
+            ImageView ficha;
+            // si es el último índice, es la foca
+            if (i == jugadores.size() - 1) {
+                ficha = PFoca;
+            } else {
+                // en caso contrario, es un humano en posición i:
+                ficha = switch (i) {
+                    case 0 -> P1;
+                    case 1 -> P2;
+                    case 2 -> P3;
+                    case 3 -> P4;
+                    default -> null;  
+                };
+            }
+            if (ficha != null) {
+                moverFicha(ficha, jugadores.get(i).getPosicion());
+            }
+        }
+    }
+
+    private boolean comprobarTurnoPerdido() {
+        if (jugadorActual.tieneTurnoPerdido()) {
+            eventos.setText(jugadorActual.getNombre() + " pierde un turno.");
+            jugadorActual.descontarTurnoPerdido();
+            siguienteTurno();
+            return true;
+        }
+        return false;
+    }
+
+    private void reproducirSonidoEvento() {
+        String sonidoPath = getClass().getResource("/sounds/evento.wav").toExternalForm();
+        AudioClip sonidoEvento = new AudioClip(sonidoPath);
+        sonidoEvento.play();
+    }
+    
+    private void procesarMovimiento(int pasos) {
+        jugadorActual.mover(pasos);
+        Casilla cas = gestorTablero.getTablero().getCasilla(jugadorActual.getPosicion());
+        String tipo = cas.getTipo();
+
+        switch (tipo) {
+            case "OSO":
+                reproducirSonidoEvento();
+                if (jugadorActual.getInventario().getPeces() >= 2) {
+                    jugadorActual.getInventario().usarPeces(2);
+                    eventos.setText(jugadorActual.getNombre() + " ha pagado 2 peces para sobornar al oso y evitar retroceder.");
+                } else {
+                    jugadorActual.setPosicion(0);
+                    eventos.setText(jugadorActual.getNombre() + " ha caído en OSO y retrocede a inicio.");
+                }
+                break;
+
+            case "AGUJERO":
+                reproducirSonidoEvento();
+                int pos = jugadorActual.getPosicion();
+                for (int i = pos - 1; i >= 0; i--) {
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("AGUJERO")) {
+                        jugadorActual.setPosicion(i);
+                        break;
+                    }
+                }
+                eventos.setText(jugadorActual.getNombre() + " ha caído en AGUJERO y retrocede.");
+                break;
+
+            case "TRINEO":
+                reproducirSonidoEvento();
+                pos = jugadorActual.getPosicion();
+                for (int i = pos + 1; i < Tablero.NUM_CASILLAS; i++) {
+                    if (gestorTablero.getTablero().getCasilla(i).getTipo().equals("TRINEO")) {
+                        jugadorActual.setPosicion(i);
+                        break;
+                    }
+                }
+                eventos.setText(jugadorActual.getNombre() + " ha usado TRINEO y avanza.");
+                break;
+
+            case "INTERROGANTE":
+                reproducirSonidoEvento();
+                String msg = Evento.activarEvento(jugadorActual);
+                eventos.setText(msg);
+                break;
+
+            case "SUELO_QUEBRADIZO":
+                reproducirSonidoEvento();
+                int totalObjetos = jugadorActual.getInventario().getDadosRapidos()
+                                 + jugadorActual.getInventario().getDadosLentos()
+                                 + jugadorActual.getInventario().getPeces()
+                                 + jugadorActual.getInventario().getBolasNieve();
+
+                if (totalObjetos > 5) {
+                    jugadorActual.setPosicion(0);
+                    eventos.setText(jugadorActual.getNombre()
+                        + " ha caído en Suelo Quebradizo con más de 5 objetos y vuelve al inicio.");
+                } else if (totalObjetos > 0) {
+                    jugadorActual.perderTurnos(1);
+                    String perdido = jugadorActual.getInventario().perderObjetoAleatorio();
+                    eventos.setText(jugadorActual.getNombre()
+                        + " ha caído en Suelo Quebradizo con " + totalObjetos
+                        + " objetos y pierde un turno"
+                        + (perdido != null ? " y un " + perdido + "." : "."));
+                } else {
+                    eventos.setText(jugadorActual.getNombre()
+                        + " ha pasado por Suelo Quebradizo sin objetos: sin penalización.");
+                }
+                break;
+
+            default:
+                eventos.setText("");
+                break;
+        }
+
+        dadoResultText.setText("Ha salido: " + pasos);
+        actualizarVista();
+        chequearChoque();      
+    }
+
+    private void siguienteTurno() {
+        turnoActual = (turnoActual + 1) % jugadores.size();
+        jugadorActual = jugadores.get(turnoActual);
+        bolasNieveUsadas = 0;
+        actualizarVista();
+
+        // Si le toca a la Foca IA...
+        if (jugadorActual instanceof Foca) {
+            // Creamos un retraso de 2 segundos
+            PauseTransition espera = new PauseTransition(Duration.seconds(2));
+            espera.setOnFinished(ev -> {
+                // Sonido de la Foca
+                String rutaFoca = getClass().getResource("/sounds/foca.wav").toExternalForm();
+                AudioClip sonidoFoca = new AudioClip(rutaFoca);
+                sonidoFoca.play();
+
+                // Ahora efectúa su tirada
+                ((Foca) jugadorActual).ejecutarTurno(jugadores, gestorTablero.getTablero());
+                actualizarVista();
+
+                
+                siguienteTurno();
+            });
+            espera.play();
+        }
+    }
+
+    @FXML private void handleNewGame(ActionEvent e)  { }
+    @FXML private void handleSaveGame(ActionEvent e) { }
+    @FXML private void handleLoadGame(ActionEvent e) { }
+    @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
+
+    @FXML
+    private void handleDado(ActionEvent e) {
+        if (comprobarTurnoPerdido()) return;
+        int tirada = rnd.nextInt(6) + 1;
+        procesarMovimiento(tirada);
+        siguienteTurno();
+    }
+
+    @FXML
+    private void handleRapido(ActionEvent e) {
+        if (comprobarTurnoPerdido()) return;
+        if (jugadorActual.getInventario().usarDadoRapido()) {
+            int tirada = 5 + rnd.nextInt(6);
+            procesarMovimiento(tirada);
+            siguienteTurno();
+        }
+    }
+
+    @FXML
+    private void handleLento(ActionEvent e) {
+        if (comprobarTurnoPerdido()) return;
+        if (jugadorActual.getInventario().usarDadoLento()) {
+            int tirada = 1 + rnd.nextInt(3);
+            procesarMovimiento(tirada);
+            siguienteTurno();
+        }
+    }
+
+    @FXML
+    private void handlePeces(ActionEvent e) {
+        if (comprobarTurnoPerdido()) return;
+        if (jugadorActual.getInventario().usarPez()) {
+            eventos.setText(jugadorActual.getNombre() + " ha sobornado al oso y evitará retroceder si cae");
+        } else {
+            eventos.setText("No tienes peces para sobornar.");
+        }
+        siguienteTurno();
+    }
+
+    @FXML
+    private void handleNieve(ActionEvent e) {
+        if (comprobarTurnoPerdido()) return;
+        if (bolasNieveUsadas >= 6) {
+            eventos.setText("Has usado el máximo de 6 bolas de nieve.");
+            return;
+        }
+
+        if (jugadorActual.getInventario().usarBola()) {
+            List<Jugador> posiblesVictimas = jugadores.stream()
+                .filter(j -> j != jugadorActual)
+                .toList();
+
+            List<String> nombresVictimas = posiblesVictimas.stream()
+                .map(Jugador::getNombre)
+                .toList();
+
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(nombresVictimas.get(0), nombresVictimas);
+            dialog.setTitle("Elegir jugador objetivo");
+            dialog.setHeaderText("Selecciona el jugador al que quieres tirar la bola de nieve");
+            dialog.setContentText("Jugador:");
+
+            Optional<String> resultado = dialog.showAndWait();
+
+            if (resultado.isPresent()) {
+                String nombreSeleccionado = resultado.get();
+                Jugador victima = posiblesVictimas.stream()
+                    .filter(j -> j.getNombre().equals(nombreSeleccionado))
+                    .findFirst().orElse(null);
+
+                if (victima != null) {
+                    victima.mover(-1);
+                    bolasNieveUsadas++;
+                    eventos.setText(jugadorActual.getNombre() + " lanzó una bola de nieve a " + victima.getNombre());
+                    actualizarVista();
+                    siguienteTurno();
+                } else {
+                    eventos.setText("Jugador seleccionado no válido.");
+                }
+            } else {
+                eventos.setText("No seleccionaste ningún jugador.");
+            }
+        } else {
+            eventos.setText("No tienes bolas de nieve para lanzar.");
+        }
+    }
+    
+    private void chequearChoque() {
+        for (Jugador otro : jugadores) {
+            if (otro != jugadorActual && otro.getPosicion() == jugadorActual.getPosicion()) {
+                int bolasA = jugadorActual.getInventario().getBolasNieve();
+                int bolasB = otro.getInventario().getBolasNieve();
+
+                while (jugadorActual.getInventario().getBolasNieve() > 0)
+                    jugadorActual.getInventario().usarBola();
+                while (otro.getInventario().getBolasNieve() > 0)
+                    otro.getInventario().usarBola();
+
+                if (bolasA > bolasB) {
+                    int diff = bolasA - bolasB;
+                    eventos.setText(jugadorActual.getNombre()
+                        + " gana la guerra (" + bolasA + " vs " + bolasB + ") y avanza " + diff + " casillas.");
+                    jugadorActual.mover(diff);
+                    ImageView f = switch (jugadores.indexOf(jugadorActual)) {
+                        case 0 -> P1;
+                        case 1 -> P2;
+                        case 2 -> P3;
+                        case 3 -> P4;
+                        case 4 -> PFoca;
+                        default -> null;
+                    };
+                    if (f != null) moverFicha(f, jugadorActual.getPosicion());
+                }
+                else if (bolasB > bolasA) {
+                    int diff = bolasB - bolasA;
+                    eventos.setText(otro.getNombre()
+                        + " gana la guerra (" + bolasB + " vs " + bolasA + ") y avanza " + diff + " casillas.");
+                    otro.mover(diff);
+                    ImageView f = switch (jugadores.indexOf(otro)) {
+                        case 0 -> P1;
+                        case 1 -> P2;
+                        case 2 -> P3;
+                        case 3 -> P4;
+                        case 4 -> PFoca;
+                        default -> null;
+                    };
+                    if (f != null) moverFicha(f, otro.getPosicion());
+                }
+                else {
+                    eventos.setText("Empate en la guerra (" + bolasA + " vs " + bolasB + "). Ambos a 0.");
+                }
+
+                actualizarVista();
+                break;
+            }
+        }
+    }
+}
