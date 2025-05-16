@@ -1,7 +1,6 @@
 package vista;
 
 import controlador.gestorTablero;
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,15 +17,10 @@ import modelo.Casilla;
 import modelo.Evento;
 import modelo.Jugador;
 import modelo.Tablero;
-import modelo.Foca;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -40,7 +34,7 @@ public class pantallaJuegoController {
     @FXML private MenuItem quitGame;
 
     @FXML private GridPane tablero;
-    @FXML private ImageView P1, P2, P3, P4, PFoca;
+    @FXML private ImageView P1, P2, P3, P4;
 
     @FXML private Text dadoResultText;
     @FXML private Button dado;
@@ -66,21 +60,17 @@ public class pantallaJuegoController {
         P2.setImage(new Image(getClass().getResourceAsStream("/images/penguin_red.png")));
         P3.setImage(new Image(getClass().getResourceAsStream("/images/penguin_green.png")));
         P4.setImage(new Image(getClass().getResourceAsStream("/images/penguin_yellow.png")));
-        // Cargar imagen de la foca IA
-        PFoca.setImage(new Image(getClass().getResourceAsStream("/images/foca.png")));
 
         // Ajustar tamaño de imagen
-        for (ImageView iv : List.of(P1, P2, P3, P4, PFoca)) {
-            iv.setFitWidth(30);
-            iv.setFitHeight(30);
-        }
+        P1.setFitWidth(30); P1.setFitHeight(30);
+        P2.setFitWidth(30); P2.setFitHeight(30);
+        P3.setFitWidth(30); P3.setFitHeight(30);
+        P4.setFitWidth(30); P4.setFitHeight(30);
 
-        // Posicionar inicialmente todas en la casilla 0
         moverFicha(P1, 0);
         moverFicha(P2, 0);
         moverFicha(P3, 0);
         moverFicha(P4, 0);
-        moverFicha(PFoca, 0);
         
         String ruta = getClass().getResource("/sounds/fondo.mp3").toExternalForm();
         Media media = new Media(ruta);
@@ -88,23 +78,18 @@ public class pantallaJuegoController {
 
         // Reproducir la música en loop infinito
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+
         mediaPlayer.play();
+        
     }
 
-    public void setJugadores(List<Jugador> humanos) {
-        // 1. Guardamos sólo a los humanos que llegan de la selección
-        this.jugadores = new ArrayList<>(humanos);
-        
-        // 2. Añadimos la Foca IA al final
-        Foca foca = new Foca("Foca IA", "gris");  // puedes poner el color que quieras
-        this.jugadores.add(foca);
-
-        // 3. Inicializamos el índice para que siguienteTurno() arranque en 0
-        this.turnoActual = -1;   
-
-        // 4. Dibujamos y lanzamos el primer turno (jugador 0)
+    public void setJugadores(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+        this.turnoActual = 0;
+        this.jugadorActual = jugadores.get(0);
+        this.bolasNieveUsadas = 0;
         dibujarTablero();
-        siguienteTurno();
+        actualizarVista();
     }
 
     private void dibujarTablero() {
@@ -149,8 +134,8 @@ public class pantallaJuegoController {
             tablero.add(hbox, col, row);
         }
 
-        // Añadir las fichas (jugadores humanos y IA)
-        tablero.getChildren().addAll(P1, P2, P3, P4, PFoca);
+        // Añadir los pingüinos (fichas)
+        tablero.getChildren().addAll(P1, P2, P3, P4);
     }
 
     private void moverFicha(ImageView ficha, int destino) {
@@ -171,13 +156,14 @@ public class pantallaJuegoController {
         double deltaX = (targetCol - currentCol) * 100.0;
         double deltaY = (targetRow - currentRow) * 30.0;
 
-        TranslateTransition transition = new TranslateTransition(Duration.millis(1000), ficha);
+        TranslateTransition transition = new TranslateTransition(Duration.millis(1000), ficha); // Más lento (1 segundo)
         transition.setByX(deltaX);
         transition.setByY(deltaY);
         transition.setOnFinished(e -> {
             ficha.setTranslateX(0);
             ficha.setTranslateY(0);
         });
+
         transition.play();
     }
 
@@ -192,28 +178,15 @@ public class pantallaJuegoController {
         peces.setDisable(jugadorActual.getInventario().getPeces() == 0);
         nieve.setDisable(jugadorActual.getInventario().getBolasNieve() == 0);
 
-        // Mover cada ficha según la posición en la lista de jugadores
         for (int i = 0; i < jugadores.size(); i++) {
-            ImageView ficha;
-            // si es el último índice, es la foca
-            if (i == jugadores.size() - 1) {
-                ficha = PFoca;
-            } else {
-                // en caso contrario, es un humano en posición i:
-                ficha = switch (i) {
-                    case 0 -> P1;
-                    case 1 -> P2;
-                    case 2 -> P3;
-                    case 3 -> P4;
-                    default -> null;  
-                };
-            }
-            if (ficha != null) {
-                moverFicha(ficha, jugadores.get(i).getPosicion());
-            }
+            ImageView ficha = (i == 0 ? P1 : i == 1 ? P2 : i == 2 ? P3 : P4);
+            moverFicha(ficha, jugadores.get(i).getPosicion());
         }
     }
 
+    /**
+     * Comprueba y aplica salto de turno si el jugador tiene turnos pendientes.
+     */
     private boolean comprobarTurnoPerdido() {
         if (jugadorActual.tieneTurnoPerdido()) {
             eventos.setText(jugadorActual.getNombre() + " pierde un turno.");
@@ -302,6 +275,7 @@ public class pantallaJuegoController {
                 break;
 
             default:
+                // Casilla normal: no suena el evento
                 eventos.setText("");
                 break;
         }
@@ -311,31 +285,21 @@ public class pantallaJuegoController {
         chequearChoque();      
     }
 
+    
+
     private void siguienteTurno() {
-        turnoActual = (turnoActual + 1) % jugadores.size();
-        jugadorActual = jugadores.get(turnoActual);
-        bolasNieveUsadas = 0;
-        actualizarVista();
+    	  turnoActual = (turnoActual + 1) % jugadores.size();
+          jugadorActual = jugadores.get(turnoActual);
+          bolasNieveUsadas = 0;
+          actualizarVista();
 
-        // Si le toca a la Foca IA...
-        if (jugadorActual instanceof Foca) {
-            // Creamos un retraso de 2 segundos
-            PauseTransition espera = new PauseTransition(Duration.seconds(2));
-            espera.setOnFinished(ev -> {
-                // Sonido de la Foca
-                String rutaFoca = getClass().getResource("/sounds/foca.wav").toExternalForm();
-                AudioClip sonidoFoca = new AudioClip(rutaFoca);
-                sonidoFoca.play();
-
-                // Ahora efectúa su tirada
-                ((Foca) jugadorActual).ejecutarTurno(jugadores, gestorTablero.getTablero());
-                actualizarVista();
-
-                
-                siguienteTurno();
-            });
-            espera.play();
-        }
+          // Si el siguiente jugador es la Foca, que juegue sola y repita turno
+          if (jugadorActual instanceof modelo.Foca) {
+              modelo.Foca foca = (modelo.Foca) jugadorActual;
+              foca.ejecutarTurno(jugadores, gestorTablero.getTablero());
+              actualizarVista();
+              siguienteTurno();
+          }
     }
 
     @FXML private void handleNewGame(ActionEvent e)  { }
@@ -435,6 +399,7 @@ public class pantallaJuegoController {
                 int bolasA = jugadorActual.getInventario().getBolasNieve();
                 int bolasB = otro.getInventario().getBolasNieve();
 
+                // Vaciar bolas de ambos
                 while (jugadorActual.getInventario().getBolasNieve() > 0)
                     jugadorActual.getInventario().usarBola();
                 while (otro.getInventario().getBolasNieve() > 0)
@@ -445,38 +410,31 @@ public class pantallaJuegoController {
                     eventos.setText(jugadorActual.getNombre()
                         + " gana la guerra (" + bolasA + " vs " + bolasB + ") y avanza " + diff + " casillas.");
                     jugadorActual.mover(diff);
-                    ImageView f = switch (jugadores.indexOf(jugadorActual)) {
-                        case 0 -> P1;
-                        case 1 -> P2;
-                        case 2 -> P3;
-                        case 3 -> P4;
-                        case 4 -> PFoca;
-                        default -> null;
-                    };
-                    if (f != null) moverFicha(f, jugadorActual.getPosicion());
+                    // animar ficha ganadora
+                    int idx = jugadores.indexOf(jugadorActual);
+                    ImageView f = (idx == 0? P1 : idx==1? P2 : idx==2? P3 : P4);
+                    moverFicha(f, jugadorActual.getPosicion());
                 }
                 else if (bolasB > bolasA) {
                     int diff = bolasB - bolasA;
                     eventos.setText(otro.getNombre()
                         + " gana la guerra (" + bolasB + " vs " + bolasA + ") y avanza " + diff + " casillas.");
                     otro.mover(diff);
-                    ImageView f = switch (jugadores.indexOf(otro)) {
-                        case 0 -> P1;
-                        case 1 -> P2;
-                        case 2 -> P3;
-                        case 3 -> P4;
-                        case 4 -> PFoca;
-                        default -> null;
-                    };
-                    if (f != null) moverFicha(f, otro.getPosicion());
+                    int idx = jugadores.indexOf(otro);
+                    ImageView f = (idx == 0? P1 : idx==1? P2 : idx==2? P3 : P4);
+                    moverFicha(f, otro.getPosicion());
                 }
                 else {
-                    eventos.setText("Empate en la guerra (" + bolasA + " vs " + bolasB + "). Ambos a 0.");
+                    eventos.setText("Empat en la guerra (" + bolasA + " vs " + bolasB + "). Ambdós a 0.");
                 }
 
+                // tras resolver un choque, sólo habrá uno por turno
                 actualizarVista();
                 break;
             }
         }
     }
+    
+   
+    
 }

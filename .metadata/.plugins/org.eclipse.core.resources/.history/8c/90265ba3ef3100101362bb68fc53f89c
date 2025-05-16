@@ -111,12 +111,4 @@ public class Inventario {
         }
         return elegido;
     }
-    
-    public void reducirMitad() {
-        dadosRapidos /= 2;
-        dadosLentos /= 2;
-        peces /= 2;
-        bolasNieve /= 2;
-    }
-
 }

@@ -331,7 +331,7 @@ public class pantallaJuegoController {
                 ((Foca) jugadorActual).ejecutarTurno(jugadores, gestorTablero.getTablero());
                 actualizarVista();
 
-                
+                // Pasamos al siguiente turno (humano o recursivo IA)
                 siguienteTurno();
             });
             espera.play();

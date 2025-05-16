@@ -1,0 +1,50 @@
+package modelo;
+
+import java.util.List;
+import java.util.Random;
+import modelo.Tablero;
+import modelo.Casilla;
+
+
+public class Foca extends Jugador {
+    private Random rnd;
+
+    public Foca(String nombre, String color) {
+        super(nombre, color);
+        this.rnd = new Random();
+    }
+
+   
+    public void ejecutarTurno(List<Jugador> jugadores, Tablero tablero) {
+        Random rnd = new Random();
+        int pasos = rnd.nextInt(6) + 1;
+        int posicionInicial = getPosicion();
+        int nuevaPosicion = Math.min(posicionInicial + pasos, Tablero.NUM_CASILLAS - 1);
+        setPosicion(nuevaPosicion);
+
+        // 1. PASA POR ENCIMA DE OTROS JUGADORES (sin incluir destino)
+        for (int i = posicionInicial + 1; i < nuevaPosicion; i++) {
+            for (Jugador j : jugadores) {
+                if (!(j instanceof Foca) && j.getPosicion() == i) {
+                    j.getInventario().reducirMitad();
+                    System.out.println("La Foca ha pasado por " + j.getNombre() + " y le ha quitado la mitad del inventario.");
+                }
+            }
+        }
+
+        // 2. CAE EN LA MISMA CASILLA QUE UN JUGADOR
+        for (Jugador j : jugadores) {
+            if (!(j instanceof Foca) && j.getPosicion() == nuevaPosicion) {
+                // Buscar el agujero anterior
+                int posActual = j.getPosicion();
+                for (int i = posActual - 1; i >= 0; i--) {
+                    if (tablero.getCasilla(i).getTipo().equals("AGUJERO")) {
+                        j.setPosicion(i);
+                        System.out.println("La Foca ha golpeado a " + j.getNombre() + " y lo ha enviado al agujero en " + i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}

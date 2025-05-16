@@ -5,7 +5,13 @@ import java.util.Random;
 import modelo.Tablero;
 import modelo.Casilla;
 
-
+/**
+ * Clase Foca: jugador controlado por IA.
+ * Comportamiento en su turno:
+ * 1. Tira un dado normal (1-6) y avanza.
+ * 2. Al pasar por casillas con otros jugadores, les quita la mitad de sus bolas de nieve.
+ * 3. Si cae en la misma casilla que un jugador, lo envía al agujero anterior.
+ */
 public class Foca extends Jugador {
     private Random rnd;
 
@@ -14,7 +20,11 @@ public class Foca extends Jugador {
         this.rnd = new Random();
     }
 
-   
+    /**
+     * Ejecuta el turno de la Foca IA.
+     * @param jugadores Lista de todos los jugadores (incluida la foca).
+     * @param tablero   Tablero de la partida.
+     */
     public void ejecutarTurno(List<Jugador> jugadores, Tablero tablero) {
         // 0. Gestionar turnos perdidos
         if (tieneTurnoPerdido()) {

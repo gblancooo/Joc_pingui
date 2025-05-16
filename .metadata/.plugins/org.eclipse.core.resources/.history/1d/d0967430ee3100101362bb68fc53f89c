@@ -1,7 +1,6 @@
 package vista;
 
 import controlador.gestorTablero;
-import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,13 +19,9 @@ import modelo.Jugador;
 import modelo.Tablero;
 import modelo.Foca;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -91,20 +86,11 @@ public class pantallaJuegoController {
         mediaPlayer.play();
     }
 
-    public void setJugadores(List<Jugador> humanos) {
-        // 1. Guardamos sólo a los humanos que llegan de la selección
-        this.jugadores = new ArrayList<>(humanos);
-        
-        // 2. Añadimos la Foca IA al final
-        Foca foca = new Foca("Foca IA", "gris");  // puedes poner el color que quieras
-        this.jugadores.add(foca);
-
-        // 3. Inicializamos el índice para que siguienteTurno() arranque en 0
-        this.turnoActual = -1;   
-
-        // 4. Dibujamos y lanzamos el primer turno (jugador 0)
+    public void setJugadores(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+        this.turnoActual = -1;   // para que siguienteTurno() inicie en índice 0
         dibujarTablero();
-        siguienteTurno();
+        siguienteTurno();        // arranca el ciclo de turnos (humano o IA)
     }
 
     private void dibujarTablero() {
@@ -194,23 +180,15 @@ public class pantallaJuegoController {
 
         // Mover cada ficha según la posición en la lista de jugadores
         for (int i = 0; i < jugadores.size(); i++) {
-            ImageView ficha;
-            // si es el último índice, es la foca
-            if (i == jugadores.size() - 1) {
-                ficha = PFoca;
-            } else {
-                // en caso contrario, es un humano en posición i:
-                ficha = switch (i) {
-                    case 0 -> P1;
-                    case 1 -> P2;
-                    case 2 -> P3;
-                    case 3 -> P4;
-                    default -> null;  
-                };
-            }
-            if (ficha != null) {
-                moverFicha(ficha, jugadores.get(i).getPosicion());
-            }
+            ImageView ficha = switch (i) {
+                case 0 -> P1;
+                case 1 -> P2;
+                case 2 -> P3;
+                case 3 -> P4;
+                case 4 -> PFoca;
+                default -> null;
+            };
+            if (ficha != null) moverFicha(ficha, jugadores.get(i).getPosicion());
         }
     }
 
@@ -317,24 +295,11 @@ public class pantallaJuegoController {
         bolasNieveUsadas = 0;
         actualizarVista();
 
-        // Si le toca a la Foca IA...
         if (jugadorActual instanceof Foca) {
-            // Creamos un retraso de 2 segundos
-            PauseTransition espera = new PauseTransition(Duration.seconds(2));
-            espera.setOnFinished(ev -> {
-                // Sonido de la Foca
-                String rutaFoca = getClass().getResource("/sounds/foca.wav").toExternalForm();
-                AudioClip sonidoFoca = new AudioClip(rutaFoca);
-                sonidoFoca.play();
-
-                // Ahora efectúa su tirada
-                ((Foca) jugadorActual).ejecutarTurno(jugadores, gestorTablero.getTablero());
-                actualizarVista();
-
-                
-                siguienteTurno();
-            });
-            espera.play();
+            Foca foca = (Foca) jugadorActual;
+            foca.ejecutarTurno(jugadores, gestorTablero.getTablero());
+            actualizarVista();
+            siguienteTurno();
         }
     }
 
