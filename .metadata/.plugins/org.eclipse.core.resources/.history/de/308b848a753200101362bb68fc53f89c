@@ -1,0 +1,25 @@
+-- Tabla principal de partidas
+CREATE TABLE tbl_partida (
+    Id NUMBER PRIMARY KEY,
+    NumJugadors NUMBER
+);
+
+-- Tabla del tablero
+CREATE TABLE Tablero (
+    id_partida NUMBER,
+    FILA NUMBER,
+    COLUMNA NUMBER,
+    TIPO VARCHAR2(50),
+    CONSTRAINT pk_tablero PRIMARY KEY (id_partida, FILA, COLUMNA),
+    CONSTRAINT fk_tablero_partida FOREIGN KEY (id_partida)
+        REFERENCES tbl_partida(Id)
+);
+
+-- Tabla de relación entre jugadores y partida
+CREATE TABLE Jugadors_Partida (
+    NumJugador NUMBER,
+    id_partida NUMBER,
+    CONSTRAINT pk_jugadors_partida PRIMARY KEY (NumJugador, id_partida),
+    CONSTRAINT fk_jugadors_partida FOREIGN KEY (id_partida)
+        REFERENCES tbl_partida(Id)
+);

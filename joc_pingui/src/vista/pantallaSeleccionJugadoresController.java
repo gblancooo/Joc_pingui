@@ -86,4 +86,12 @@ public class pantallaSeleccionJugadoresController {
             e.printStackTrace();
         }
     }
+
+	public ComboBox<Integer> getComboJugadores() {
+		return comboJugadores;
+	}
+
+	public void setComboJugadores(ComboBox<Integer> comboJugadores) {
+		this.comboJugadores = comboJugadores;
+	}
 }

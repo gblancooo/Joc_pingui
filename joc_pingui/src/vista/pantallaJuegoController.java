@@ -20,6 +20,10 @@ import modelo.Jugador;
 import modelo.Tablero;
 import modelo.Foca;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,8 +62,15 @@ public class pantallaJuegoController {
 
     private int bolasNieveUsadas = 0;
 
+    public Connection conexion = null;
+    
     public void initialize() {
-        gestorTablero = new gestorTablero();
+        
+    	//creem conexio a la base de dades
+    	
+    	conexion = bbdd.conectarBaseDatos();
+    	
+    	gestorTablero = new gestorTablero();
 
         // Cargar imágenes de pingüinos para cada jugador
         P1.setImage(new Image(getClass().getResourceAsStream("/images/penguin_blue.png")));
@@ -339,8 +350,90 @@ public class pantallaJuegoController {
     }
 
     @FXML private void handleNewGame(ActionEvent e)  { }
-    @FXML private void handleSaveGame(ActionEvent e) { }
-    @FXML private void handleLoadGame(ActionEvent e) { }
+    @FXML private void handleSaveGame(ActionEvent e) {
+    	
+    	Casilla casilla;
+    	String tipo;
+    	
+    	
+    	//esborro totes les taules
+    	bbdd.delete(conexion, "DELETE  FROM TBL_PARTIDA");
+    	bbdd.delete(conexion, "DELETE  FROM TABLERO");
+    	bbdd.delete(conexion, "DELETE  FROM JUGADORS_PARTIDA");
+    	
+    	
+    	
+    	
+    	//	crear partida per desar
+    	int maxPartida;
+    	
+    	//busco el numero maxim del identificador
+    	String sql = "SELECT max(Id) as Maxim FROM tbl_partida";
+
+        try (Statement st = conexion.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("Maxim");
+                id=id+1;
+                
+                Integer jug = jugadores.size();
+                /////////////////////////////////////////////////////////////////////////////////////////////////
+                		/////////////////////////////////////////////////////////////////////////////////////////
+                //Guardem nova partida i numero de jugadors
+                bbdd.insert(conexion, "INSERT INTO tbl_partida ( Id, NumJugadors) values ("+ id + ", "+ jug + ")");
+                
+                //Guardar en la taula tablero.
+                
+                for (int i = 0; i <= 49; i++) {
+					
+                	casilla = gestorTablero.getTablero().getCasilla(i);
+                	tipo = casilla.getTipo();
+                
+                	
+                	bbdd.insert(conexion, "INSERT INTO Tablero ( ID_PARTIDA, FILA, COLUMNA, TIPO) values ("+ id + ", "+ i + "," + 0 + ",'" + tipo + "')");
+                }
+                		
+                // Guardem posició jugadors, EL ULTIM JUGADOR SEMPRE ES LA FOCA
+                
+                for (int i = 0; i < jug; i++) {
+                	
+                	bbdd.insert(conexion, "INSERT INTO JUGADORS_PARTIDA ( ID_PARTIDA, NUMJUGADOR, POSICIO,DADORAPIDO,DADOLENTO,PECES,BOLASNIEVE) "
+		                	+ "values ("+ id + ", "+ i + ", " + jugadores.get(i).getPosicion() + ", " 
+		                	+ jugadores.get(i).getInventario().getDadosRapidos() + ", "
+		                	+ jugadores.get(i).getInventario().getDadosLentos() + ", "
+		                	+ jugadores.get(i).getInventario().getPeces() + ", "
+		                	+ jugadores.get(i).getInventario().getBolasNieve() +
+                			")");
+                	
+                	
+                	
+				}
+                
+           
+                               
+                
+                //System.out.println("La id maxima es: " + id );
+
+            }
+
+        } catch (SQLException e1) {
+            System.out.println("Error al ejecutar SELECT: " + e1);
+        }
+    	
+    	
+    	
+    	
+    }
+    @FXML private void handleLoadGame(ActionEvent e) {
+    	
+    	//Connection conexion = null;
+    	//conexion = bbdd.conectarBaseDatos();
+    	bbdd.insert(conexion, "INSERT INTO tbl_partida ( Id, NumJugadors) values (2, 1)"); 
+    	
+    	
+    }
+    
     @FXML private void handleQuitGame(ActionEvent e) { System.exit(0); }
 
     @FXML

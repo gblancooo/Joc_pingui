@@ -1,0 +1,61 @@
+package modelo;
+
+import java.util.List;
+import java.util.Random;
+import modelo.Tablero;
+import modelo.Casilla;
+
+
+public class Foca extends Jugador {
+    private Random rnd;
+
+    public Foca(String nombre, String color) {
+        super(nombre, color);
+        this.rnd = new Random();
+    }
+
+   
+    public void ejecutarTurno(List<Jugador> jugadores, Tablero tablero) {
+        // 0. Gestionar turnos perdidos
+        if (tieneTurnoPerdido()) {
+            descontarTurnoPerdido();
+            return;
+        }
+
+        // 1. Tirada normal
+        int pasos = rnd.nextInt(6) + 1;
+        int origen = getPosicion();
+        int destino = Math.min(origen + pasos, Tablero.NUM_CASILLAS - 1);
+        setPosicion(destino);
+
+        // 2. Al pasar por casillas de otros jugadores
+        for (Jugador otro : jugadores) {
+            if (otro != this) {
+                int posOtro = otro.getPosicion();
+                if (posOtro > origen && posOtro <= destino) {
+                    int bolas = otro.getInventario().getBolasNieve();
+                    int aPerder = bolas / 2;
+                    for (int i = 0; i < aPerder; i++) {
+                        otro.getInventario().usarBola();
+                    }
+                }
+            }
+        }
+
+        // 3. Si cae en misma casilla que un jugador
+        for (Jugador otro : jugadores) {
+            if (otro != this && otro.getPosicion() == destino) {
+                // Buscar agujero anterior
+                int nuevaPos = 0;
+                for (int i = destino - 1; i >= 0; i--) {
+                    Casilla c = tablero.getCasilla(i);
+                    if (c.getTipo().equals("AGUJERO")) {
+                        nuevaPos = i;
+                        break;
+                    }
+                }
+                otro.setPosicion(nuevaPos);
+            }
+        }
+    }
+}
