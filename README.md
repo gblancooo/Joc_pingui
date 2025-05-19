@@ -1,2 +1,2 @@
 # Joc_pingui
-Joc pinguis
+Joc pingui
